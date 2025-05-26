@@ -818,71 +818,58 @@
 async function downloadAnimatedGif(coinName) {
     const downloadBtn = document.querySelector('.win98-button.primary');
     const originalText = downloadBtn.textContent;
-    
+
     try {
         downloadBtn.textContent = 'Creating GIF...';
         downloadBtn.disabled = true;
-        
+
         const cardElement = document.getElementById('cardPreview');
-        
-        // Much smaller size and fewer frames
-        const width = 200;
-        const height = 135;
-        const frameCount = 3;
-        
-        // Create GIF encoder
+        const width = 840;
+        const height = 570;
+        const frameCount = 8;
+
         const encoder = new GIFEncoder(width, height);
-        encoder.setRepeat(0); // 0 = loop forever
-        encoder.setDelay(400); // 400ms delay
-        encoder.setQuality(20); // Lower quality for smaller file
+        encoder.setRepeat(0); // Loop forever
+        encoder.setDelay(200); // Frame delay in ms
+        encoder.setQuality(10); // Higher quality
         encoder.start();
-        
-        // Capture frames
+
         for (let i = 0; i < frameCount; i++) {
             downloadBtn.textContent = `Frame ${i + 1}/${frameCount}`;
-            
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
+            await new Promise(resolve => setTimeout(resolve, 200));
+
             const canvas = await html2canvas(cardElement, {
-                width: width,
-                height: height,
-                scale: 0.24, // Very small scale
+                width,
+                height,
+                scale: 1,
                 useCORS: true,
-                allowTaint: true,
                 backgroundColor: null,
-                logging: false
             });
-            
+
             const ctx = canvas.getContext('2d');
             const imageData = ctx.getImageData(0, 0, width, height);
             encoder.addFrame(imageData.data);
         }
-        
+
         encoder.finish();
-        
-        // Get the GIF as bytes
         const bytes = encoder.out.getData();
-        const blob = new Blob([new Uint8Array(bytes)], {type: 'image/gif'});
-        
-        // Download
+        const blob = new Blob([new Uint8Array(bytes)], { type: 'image/gif' });
+
         const link = document.createElement('a');
         link.download = `${coinName}_PNL_Card.gif`;
         link.href = URL.createObjectURL(blob);
         link.click();
-        
-        downloadBtn.textContent = originalText;
-        downloadBtn.disabled = false;
-        
-    } catch (error) {
-        console.error('GIF creation failed:', error);
-        downloadBtn.textContent = originalText;
-        downloadBtn.disabled = false;
-        
-        // Simple fallback - just inform user and download PNG
-        alert('GIF export is having technical issues. Downloading high-quality PNG instead!');
+
+    } catch (err) {
+        console.error('GIF export failed:', err);
+        alert('GIF export failed, downloading PNG instead.');
         await downloadStaticPng(coinName);
+    } finally {
+        downloadBtn.textContent = originalText;
+        downloadBtn.disabled = false;
     }
 }
+
         
 async function downloadStaticPng(coinName) {
     try {
