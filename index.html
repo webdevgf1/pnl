@@ -782,27 +782,30 @@
                         username: document.getElementById('usernameText')
                     };
                     
-                    // Draw text at current element positions
+                    // Add offset compensation to match CSS positioning exactly
+                    const yOffset = 0; // Adjust this if needed
+                    
+                    // Draw text at current element positions with potential offset correction
                     ctx.font = '500 41px Geist-Medium, Inter, sans-serif';
                     ctx.fillStyle = 'white';
-                    ctx.fillText(coinName.toUpperCase(), elements.coinName.offsetLeft, elements.coinName.offsetTop);
+                    ctx.fillText(coinName.toUpperCase(), elements.coinName.offsetLeft, elements.coinName.offsetTop + yOffset);
                     
                     ctx.font = '600 57px Geist-SemiBold, Inter, sans-serif';
                     ctx.fillStyle = 'black';
-                    ctx.fillText(ticker.toUpperCase(), elements.ticker.offsetLeft, elements.ticker.offsetTop);
+                    ctx.fillText(ticker.toUpperCase(), elements.ticker.offsetLeft, elements.ticker.offsetTop + yOffset);
                     
                     ctx.font = '400 28px Geist-Regular, Inter, sans-serif';
                     ctx.fillStyle = 'white';
-                    ctx.fillText(`${invested.toFixed(2)}`, elements.investedValue.offsetLeft, elements.investedValue.offsetTop);
-                    ctx.fillText(`${position.toFixed(2)}`, elements.positionValue.offsetLeft, elements.positionValue.offsetTop);
+                    ctx.fillText(`${invested.toFixed(2)}`, elements.investedValue.offsetLeft, elements.investedValue.offsetTop + yOffset);
+                    ctx.fillText(`${position.toFixed(2)}`, elements.positionValue.offsetLeft, elements.positionValue.offsetTop + yOffset);
                     
                     ctx.font = '400 27px Geist-Regular, Inter, sans-serif';
                     ctx.fillStyle = isPositive ? '#2fe3ac' : '#ff4444';
-                    ctx.fillText(`${isPositive ? '+' : ''}${percentage.toFixed(2)}%`, elements.percentage.offsetLeft, elements.percentage.offsetTop);
+                    ctx.fillText(`${isPositive ? '+' : ''}${percentage.toFixed(2)}%`, elements.percentage.offsetLeft, elements.percentage.offsetTop + yOffset);
                     
                     ctx.font = '500 41px Geist-Medium, Inter, sans-serif';
                     ctx.fillStyle = 'white';
-                    ctx.fillText(username, elements.username.offsetLeft, elements.username.offsetTop);
+                    ctx.fillText(username, elements.username.offsetLeft, elements.username.offsetTop + yOffset);
                     
                     // Download
                     const link = document.createElement('a');
