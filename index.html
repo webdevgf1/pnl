@@ -736,13 +736,17 @@
    if (!customBackgroundSet) {
        const cardPreview = document.getElementById('cardPreview');
        if (isPositive) {
-           // Profit = use green template (no orange square)
-           cardPreview.style.backgroundImage = "url('https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6834abe3c3dd94c4b9edb035_FINALPNLCARDdddd%20(1).png')";
+           // Profit = use green default template
+           cardPreview.style.backgroundImage = "url('https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/683495c0f008abc19b88aaf3_FINALPNLCARDdddd.png')";
        } else {
-           // Loss = use red template
+           // Loss = use red default template  
            cardPreview.style.backgroundImage = "url('https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6834b42b6cf4d19f455182aa_FINALPNLCARDdddd%20(1)%20(1).png')";
        }
    }
+   
+   // Update PNL overlay if custom background is set
+   updatePnlOverlay();
+}
    
    // Update PNL overlay if custom background is set
    updatePnlOverlay();
