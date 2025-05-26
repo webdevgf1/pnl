@@ -284,6 +284,17 @@
             z-index: 1;
         }
 
+        .pnl-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 2;
+            pointer-events: none;
+        }
+
         .draggable-text {
             position: absolute;
             user-select: none;
@@ -527,6 +538,7 @@
                     <div class="card-container">
                         <div class="card-preview" id="cardPreview">
                             <img id="customBackground" class="custom-background" style="display: none;">
+                            <img id="pnlOverlay" class="pnl-overlay" style="display: none;">
                             
                             <div class="draggable-text coin-name" id="coinNameText" data-name="coinName">FAKECOIN</div>
                             <div class="draggable-text ticker" id="tickerText" data-name="ticker">22.52</div>
@@ -707,6 +719,7 @@
                     customBg.src = e.target.result;
                     customBg.style.display = 'block';
                     customBackgroundSet = true;
+                    updatePnlOverlay(); // Update overlay when background changes
                 };
                 reader.readAsDataURL(file);
             }
@@ -714,10 +727,34 @@
 
         function resetBackground() {
             const customBg = document.getElementById('customBackground');
+            const pnlOverlay = document.getElementById('pnlOverlay');
             customBg.style.display = 'none';
             customBg.src = '';
+            pnlOverlay.style.display = 'none';
+            pnlOverlay.src = '';
             customBackgroundSet = false;
             document.getElementById('backgroundUpload').value = '';
+        }
+
+        function updatePnlOverlay() {
+            if (!customBackgroundSet) return;
+            
+            const invested = parseFloat(document.getElementById('invested').value) || 1.98;
+            const position = parseFloat(document.getElementById('position').value) || 24.5;
+            const percentage = invested > 0 ? ((position - invested) / invested * 100) : 0;
+            const isProfit = percentage >= 0;
+            
+            const pnlOverlay = document.getElementById('pnlOverlay');
+            
+            if (isProfit) {
+                // Use green profit overlay
+                pnlOverlay.src = 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6834a8a45948936715329db3_customwinner.png';
+            } else {
+                // Use red loss overlay
+                pnlOverlay.src = 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6834a8a45948936715329daf_customloser.png';
+            }
+            
+            pnlOverlay.style.display = 'block';
         }
 
         function updatePreview() {
@@ -741,6 +778,9 @@
             const percentageElement = document.getElementById('percentageText');
             percentageElement.textContent = `${isPositive ? '+' : ''}${percentage.toFixed(2)}%`;
             percentageElement.className = `draggable-text percentage ${isPositive ? '' : 'negative'}`;
+            
+            // Update PNL overlay if custom background is set
+            updatePnlOverlay();
         }
 
         async function downloadCard() {
