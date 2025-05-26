@@ -188,9 +188,70 @@
             z-index: 20;
         }
 
-        /* Text elements - fixed positioning */
-        .coin-name, .ticker, .invested-value, .position-value, .percentage, .username {
+        /* Draggable text elements */
+        .draggable-text {
             position: absolute;
+            cursor: move;
+            user-select: none;
+            padding: 2px 4px;
+            border: 2px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .draggable-text:hover {
+            border-color: #00fff9;
+            background: rgba(0, 255, 249, 0.1);
+        }
+
+        .draggable-text.dragging {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.2);
+        }
+
+        /* Transparent overlay for text alignment */
+        .text-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/68349ab02498c44563dcf398_FINALPNLCARD.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.7;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .overlay-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 255, 249, 0.8);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 12px;
+            cursor: pointer;
+            z-index: 20;
+        }
+
+        /* Coordinates display */
+        .coordinates {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .coord-item {
+            margin-bottom: 8px;
+            color: #00fff9;
         }
 
         .coin-name {
@@ -316,9 +377,13 @@
             </div>
             
             <div class="mode-toggle">
+                <button class="toggle-btn" id="positionMode" onclick="togglePositionMode()">
+                    Enable Position Mode
+                </button>
+                
                 <div class="instructions">
-                    <strong>Instructions:</strong><br>
-                    Fill out the form to customize your P&L card, then download your personalized image.
+                    <strong>Position Mode:</strong><br>
+                    Click to enable, then drag any text element to reposition it. Coordinates will update below.
                 </div>
                 
                 <button class="download-btn" onclick="downloadCard()">
@@ -329,20 +394,157 @@
         
         <div class="card-container">
             <div class="card-preview" id="cardPreview">
-                <div class="coin-name" id="coinNameText" style="position: absolute; top: 111px; left: 30px;">FAKECOIN</div>
-                <div class="ticker" id="tickerText" style="position: absolute; top: 173px; left: 131px;">22.52</div>
+                <div class="text-overlay" id="textOverlay"></div>
+                <button class="overlay-toggle" onclick="toggleOverlay()">Toggle Overlay</button>
                 
-                <div class="invested-value" id="investedValue" style="position: absolute; top: 325px; left: 292px;">1.98</div>
-                <div class="position-value" id="positionValue" style="position: absolute; top: 366px; left: 292px;">24.5</div>
+                <div class="draggable-text coin-name" id="coinNameText" data-name="coinName">FAKECOIN</div>
+                <div class="draggable-text ticker" id="tickerText" data-name="ticker">22.52</div>
                 
-                <div class="percentage" id="percentageText" style="position: absolute; top: 286px; left: 277px;">1135.51%</div>
+                <div class="draggable-text invested-value" id="investedValue" data-name="investedValue">1.98</div>
+                <div class="draggable-text position-value" id="positionValue" data-name="positionValue">24.5</div>
                 
-                <div class="username" id="usernameText" style="position: absolute; top: 441px; left: 91px;">@TEMPLATE</div>
+                <div class="draggable-text percentage" id="percentageText" data-name="percentage">1135.51%</div>
+                
+                <div class="draggable-text username" id="usernameText" data-name="username">@TEMPLATE</div>
             </div>
+        </div>
+        
+        <div class="coordinates" id="coordinates">
+            <strong>Current Coordinates (top, left, right, bottom):</strong><br>
+            <div id="coordList"></div>
         </div>
     </div>
 
     <script>
+        let positionModeEnabled = false;
+        let isDragging = false;
+        let currentElement = null;
+        let offset = { x: 0, y: 0 };
+
+        function toggleOverlay() {
+            const overlay = document.getElementById('textOverlay');
+            const btn = document.querySelector('.overlay-toggle');
+            
+            if (overlay.style.display === 'none') {
+                overlay.style.display = 'block';
+                btn.textContent = 'Hide Overlay';
+            } else {
+                overlay.style.display = 'none';
+                btn.textContent = 'Show Overlay';
+            }
+        }
+
+        function togglePositionMode() {
+            positionModeEnabled = !positionModeEnabled;
+            const btn = document.getElementById('positionMode');
+            const draggableElements = document.querySelectorAll('.draggable-text');
+            
+            if (positionModeEnabled) {
+                btn.textContent = 'Disable Position Mode';
+                btn.classList.add('active');
+                draggableElements.forEach(el => {
+                    el.style.pointerEvents = 'auto';
+                });
+                enableDragging();
+            } else {
+                btn.textContent = 'Enable Position Mode';
+                btn.classList.remove('active');
+                draggableElements.forEach(el => {
+                    el.style.pointerEvents = 'none';
+                    el.classList.remove('dragging');
+                });
+                disableDragging();
+            }
+            updateCoordinates();
+        }
+
+        function enableDragging() {
+            const draggableElements = document.querySelectorAll('.draggable-text');
+            
+            draggableElements.forEach(element => {
+                element.addEventListener('mousedown', startDrag);
+            });
+            
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', stopDrag);
+        }
+
+        function disableDragging() {
+            const draggableElements = document.querySelectorAll('.draggable-text');
+            
+            draggableElements.forEach(element => {
+                element.removeEventListener('mousedown', startDrag);
+            });
+            
+            document.removeEventListener('mousemove', drag);
+            document.removeEventListener('mouseup', stopDrag);
+        }
+
+        function startDrag(e) {
+            if (!positionModeEnabled) return;
+            
+            isDragging = true;
+            currentElement = e.target;
+            currentElement.classList.add('dragging');
+            
+            const rect = currentElement.getBoundingClientRect();
+            const cardRect = document.getElementById('cardPreview').getBoundingClientRect();
+            
+            offset.x = e.clientX - rect.left;
+            offset.y = e.clientY - rect.top;
+            
+            e.preventDefault();
+        }
+
+        function drag(e) {
+            if (!isDragging || !currentElement) return;
+            
+            const cardRect = document.getElementById('cardPreview').getBoundingClientRect();
+            
+            let newX = e.clientX - cardRect.left - offset.x;
+            let newY = e.clientY - cardRect.top - offset.y;
+            
+            // Keep element within card bounds
+            newX = Math.max(0, Math.min(newX, 840 - currentElement.offsetWidth));
+            newY = Math.max(0, Math.min(newY, 570 - currentElement.offsetHeight));
+            
+            currentElement.style.left = newX + 'px';
+            currentElement.style.top = newY + 'px';
+            currentElement.style.right = 'auto';
+            currentElement.style.bottom = 'auto';
+            
+            updateCoordinates();
+        }
+
+        function stopDrag() {
+            if (currentElement) {
+                currentElement.classList.remove('dragging');
+            }
+            isDragging = false;
+            currentElement = null;
+        }
+
+        function updateCoordinates() {
+            const coordList = document.getElementById('coordList');
+            const elements = document.querySelectorAll('.draggable-text');
+            let coordText = '';
+            
+            elements.forEach(element => {
+                const name = element.dataset.name;
+                const rect = element.getBoundingClientRect();
+                const cardRect = document.getElementById('cardPreview').getBoundingClientRect();
+                
+                const top = Math.round(element.offsetTop);
+                const left = Math.round(element.offsetLeft);
+                const right = Math.round(840 - element.offsetLeft - element.offsetWidth);
+                const bottom = Math.round(570 - element.offsetTop - element.offsetHeight);
+                
+                coordText += `<div class="coord-item">${name}: top: ${top}px, left: ${left}px, right: ${right}px, bottom: ${bottom}px</div>`;
+            });
+            
+            coordList.innerHTML = coordText;
+        }
+
         let positionModeEnabled = false;
         let isDragging = false;
         let currentElement = null;
@@ -592,6 +794,7 @@
         
         // Initialize
         updatePreview();
+        updateCoordinates();
     </script>
 </body>
 </html>
