@@ -295,6 +295,18 @@
             pointer-events: none;
         }
 
+        .profile-pic {
+            position: absolute;
+            top: 452px;
+            left: 35px;
+            width: 46px; /* 81 - 35 = 46px width */
+            height: 46px; /* 498 - 452 = 46px height */
+            border-radius: 6px;
+            object-fit: cover;
+            z-index: 3;
+            display: none;
+        }
+
         .draggable-text {
             position: absolute;
             user-select: none;
@@ -504,6 +516,19 @@
                         <input type="text" id="username" value="@TEMPLATE">
                     </div>
 
+                    <div class="form-group">
+                        <label for="pfpUpload">Profile Picture:</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="pfpUpload" accept="image/*" onchange="handlePfpUpload(event)">
+                            <label for="pfpUpload" class="file-input-label">
+                                Choose Profile Pic...
+                            </label>
+                        </div>
+                        <button class="win98-button" onclick="resetPfp()" style="width: 100%; margin-top: 5px;">
+                            Remove Profile Pic
+                        </button>
+                    </div>
+
                     <div class="background-section">
                         <label>Custom Background:</label>
                         <div class="file-input-wrapper">
@@ -539,6 +564,7 @@
                         <div class="card-preview" id="cardPreview">
                             <img id="customBackground" class="custom-background" style="display: none;">
                             <img id="pnlOverlay" class="pnl-overlay" style="display: none;">
+                            <img id="profilePic" class="profile-pic" style="display: none;">
                             
                             <div class="draggable-text coin-name" id="coinNameText" data-name="coinName">FAKECOIN</div>
                             <div class="draggable-text ticker" id="tickerText" data-name="ticker">22.52</div>
@@ -574,6 +600,7 @@
 
     <script>
         let customBackgroundSet = false;
+        let profilePicSet = false;
         let positionModeEnabled = false;
         let isDragging = false;
         let currentElement = null;
@@ -734,6 +761,29 @@
             pnlOverlay.src = '';
             customBackgroundSet = false;
             document.getElementById('backgroundUpload').value = '';
+        }
+
+        // Profile picture upload functionality
+        function handlePfpUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const profilePic = document.getElementById('profilePic');
+                    profilePic.src = e.target.result;
+                    profilePic.style.display = 'block';
+                    profilePicSet = true;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function resetPfp() {
+            const profilePic = document.getElementById('profilePic');
+            profilePic.style.display = 'none';
+            profilePic.src = '';
+            profilePicSet = false;
+            document.getElementById('pfpUpload').value = '';
         }
 
         function updatePnlOverlay() {
