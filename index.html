@@ -666,19 +666,25 @@
 
         // Background upload functionality
         function handleBackgroundUpload(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const customBg = document.getElementById('customBackground');
-                    customBg.src = e.target.result;
-                    customBg.style.display = 'block';
-                    customBackgroundSet = true;
-                    updatePnlOverlay();
-                };
-                reader.readAsDataURL(file);
-            }
-        }
+    const file = event.target.files[0];
+    if (file) {
+        console.log('File type:', file.type);
+        console.log('File name:', file.name);
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const customBg = document.getElementById('customBackground');
+            customBg.src = e.target.result;
+            customBg.style.display = 'block';
+            customBackgroundSet = true;
+            
+            console.log('Background set to:', e.target.result.substring(0, 50) + '...');
+            
+            updatePnlOverlay();
+        };
+        reader.readAsDataURL(file);
+    }
+}
 
         function resetBackground() {
             const customBg = document.getElementById('customBackground');
@@ -788,13 +794,23 @@
         async function downloadCard() {
     const coinName = document.getElementById('coinName').value || 'FAKECOIN';
     const customBg = document.getElementById('customBackground');
+    
+    // Debug logging
+    console.log('customBackgroundSet:', customBackgroundSet);
+    console.log('customBg.src:', customBg.src);
+    console.log('customBg.src type:', typeof customBg.src);
+    
     const isUsingGif = customBackgroundSet && customBg.src && 
                       (customBg.src.toLowerCase().includes('.gif') || 
                        customBg.src.includes('data:image/gif'));
     
+    console.log('isUsingGif:', isUsingGif);
+    
     if (isUsingGif) {
+        console.log('Creating animated GIF...');
         await downloadAnimatedGif(coinName);
     } else {
+        console.log('Creating static PNG...');
         await downloadStaticPng(coinName);
     }
 }
