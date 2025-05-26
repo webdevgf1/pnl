@@ -254,6 +254,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            overflow: auto;
         }
 
         .card-container {
@@ -261,8 +262,8 @@
         }
 
         .card-preview {
-            width: 420px;
-            height: 285px;
+            width: 840px;
+            height: 570px;
             position: relative;
             background-image: url('https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/683495c0f008abc19b88aaf3_FINALPNLCARDdddd.png');
             background-size: cover;
@@ -292,46 +293,46 @@
         .coin-name {
             font-family: 'Geist-Medium', 'Inter', sans-serif;
             font-weight: 500;
-            font-size: 20.5px;
+            font-size: 41px;
             color: white;
-            top: 55px;
-            left: 15px;
+            top: 111px;
+            left: 30px;
         }
 
         .ticker {
             font-family: 'Geist-SemiBold', 'Inter', sans-serif;
             font-weight: 600;
-            font-size: 28.5px;
+            font-size: 57px;
             color: black;
-            top: 86px;
-            left: 66px;
+            top: 173px;
+            left: 132px;
         }
 
         .invested-value {
             font-family: 'Geist-Regular', 'Inter', sans-serif;
             font-weight: 400;
-            font-size: 14px;
+            font-size: 28px;
             color: white;
-            top: 162px;
-            left: 146px;
+            top: 325px;
+            left: 292px;
         }
 
         .position-value {
             font-family: 'Geist-Regular', 'Inter', sans-serif;
             font-weight: 400;
-            font-size: 14px;
+            font-size: 28px;
             color: white;
-            top: 183px;
-            left: 146px;
+            top: 366px;
+            left: 292px;
         }
 
         .percentage {
             font-family: 'Geist-Regular', 'Inter', sans-serif;
             font-weight: 400;
-            font-size: 13.5px;
+            font-size: 27px;
             color: #2fe3ac;
-            top: 143px;
-            left: 139px;
+            top: 286px;
+            left: 278px;
         }
 
         .percentage.negative {
@@ -341,10 +342,10 @@
         .username {
             font-family: 'Geist-Medium', 'Inter', sans-serif;
             font-weight: 500;
-            font-size: 20.5px;
+            font-size: 41px;
             color: white;
-            top: 221px;
-            left: 46px;
+            top: 442px;
+            left: 92px;
         }
 
         /* Taskbar */
@@ -409,8 +410,16 @@
             
             .card-preview {
                 width: 100%;
-                max-width: 350px;
-                height: 237px;
+                max-width: 400px;
+                height: 271px;
+                transform: scale(0.48);
+                transform-origin: top left;
+            }
+            
+            .card-container {
+                width: 400px;
+                height: 271px;
+                overflow: hidden;
             }
         }
     </style>
