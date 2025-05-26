@@ -783,23 +783,25 @@
         }
 
         function handlePfpUpload(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const profilePic = document.getElementById('profilePic');
-                    const cardPreview = document.getElementById('cardPreview');
-                    
-                    profilePic.src = e.target.result;
-                    profilePic.style.display = 'block';
-                    profilePicSet = true;
-                    
-                    // Switch to background with orange square (original)
-                    cardPreview.style.backgroundImage = "url('https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/683495c0f008abc19b88aaf3_FINALPNLCARDdddd.png')";
-                };
-                reader.readAsDataURL(file);
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const profilePic = document.getElementById('profilePic');
+            const cardPreview = document.getElementById('cardPreview');
+            
+            profilePic.src = e.target.result;
+            profilePic.style.display = 'block';
+            profilePicSet = true;
+            
+            // Always switch to background without orange square when pfp is uploaded
+            if (!customBackgroundSet) {
+                cardPreview.style.backgroundImage = "url('https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6834abe3c3dd94c4b9edb035_FINALPNLCARDdddd%20(1).png')";
             }
-        }
+        };
+        reader.readAsDataURL(file);
+    }
+}
 
         function updatePnlOverlay() {
             if (!customBackgroundSet) return;
