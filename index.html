@@ -712,8 +712,8 @@
             const username = document.getElementById('username').value || '@TEMPLATE';
             
             // Calculate SOL profit (position - invested)
-            const solProfit = position - invested;
-            const ticker = solProfit.toFixed(2);
+            const solProfit = Math.abs(position - invested);
+const ticker = solProfit.toFixed(2);
             
             // Calculate percentage
             const percentage = invested > 0 ? ((position - invested) / invested * 100) : 0;
