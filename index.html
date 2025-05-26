@@ -89,7 +89,6 @@
 
         .icon-twitter { top: 20px; left: 20px; }
         .icon-pumpfun { top: 20px; left: 120px; }
-
         /* Windows 98 Application Window */
         .window {
             position: absolute;
@@ -297,10 +296,10 @@
 
         .profile-pic {
             position: absolute;
-            top: 449px;
-            left: 33px;
-            width: 48px; /* 81 - 35 = 46px width */
-            height: 51px; /* 498 - 452 = 46px height */
+            top: 440px;
+            left: 35px;
+            width: 46px;
+            height: 46px;
             border-radius: 6px;
             object-fit: cover;
             z-index: 3;
@@ -316,16 +315,6 @@
             padding: 2px 4px;
             border: 2px solid transparent;
             transition: border-color 0.2s;
-        }
-
-        .draggable-text:hover {
-            border-color: #00fff9;
-            background: rgba(0, 255, 249, 0.1);
-        }
-
-        .draggable-text.dragging {
-            border-color: #ff6b6b;
-            background: rgba(255, 107, 107, 0.2);
         }
 
         .coin-name {
@@ -424,12 +413,17 @@
             padding: 2px 5px;
         }
 
-        /* Status text */
-        .status-text {
-            font-size: 10px;
-            color: #666;
-            margin-top: 10px;
-            text-align: center;
+        .taskbar-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: auto;
+        }
+
+        .ca-text {
+            font-size: 11px;
+            color: #000;
+            font-weight: bold;
         }
 
         @media (max-width: 768px) {
@@ -546,14 +540,14 @@
                     </div>
 
                     <div class="background-section">
-    <label>Referral Code:</label>
-    <button class="win98-button" style="width: 100%; background: #a0a0a0; color: #666; cursor: not-allowed;" disabled>
-        🔒 Get Referral Code
-    </button>
-    <div style="font-size: 10px; margin-top: 5px; color: #666;">
-        Feature coming soon...
-    </div>
-</div>
+                        <label>Referral Code:</label>
+                        <button class="win98-button" style="width: 100%; background: #a0a0a0; color: #666; cursor: not-allowed;" disabled>
+                            🔒 Get Referral Code
+                        </button>
+                        <div style="font-size: 10px; margin-top: 5px; color: #666;">
+                            Feature coming soon...
+                        </div>
+                    </div>
                     
                     <button class="win98-button primary" onclick="downloadCard()" style="width: 100%; margin-top: 15px;">
                         Download P&L Card
@@ -585,7 +579,7 @@
             </div>
         </div>
 
-        <!-- Coordinates Display - Hidden by default -->
+        <!-- Coordinates Display - Hidden -->
         <div id="coordinatesDisplay" style="display: none !important;">
             <strong>Current Coordinates (top, left, right, bottom):</strong><br>
             <div id="coordList"></div>
@@ -594,17 +588,19 @@
 
     <!-- Taskbar -->
     <div class="taskbar">
-    <button class="start-button">
-        <span style="background: #008000; width: 12px; height: 12px; display: block;"></span>
-        Start
-    </button>
-    <div style="margin-left: auto; display: flex; align-items: center; gap: 10px;">
-        <span style="font-size: 11px; color: #000; font-weight: bold;">CA: @FAKEPNL</span>
-        <div class="taskbar-time" id="taskbarTime">12:00 PM</div>
+        <button class="start-button">
+            <span style="background: #008000; width: 12px; height: 12px; display: block;"></span>
+            Start
+        </button>
+        <div class="taskbar-info">
+            <span class="ca-text">CA: SOON</span>
+            <div class="taskbar-time" id="taskbarTime">12:00 PM</div>
+        </div>
     </div>
-</div>
-
     <script>
+        let customBackgroundSet = false;
+        let profilePicSet = false;
+
         // Update taskbar time
         function updateTime() {
             const now = new Date();
@@ -622,7 +618,7 @@
         function openPumpFun() {
             window.open('https://pump.fun', '_blank');
         }
-        
+
         // Background upload functionality
         function handleBackgroundUpload(event) {
             const file = event.target.files[0];
@@ -633,7 +629,7 @@
                     customBg.src = e.target.result;
                     customBg.style.display = 'block';
                     customBackgroundSet = true;
-                    updatePnlOverlay(); // Update overlay when background changes
+                    updatePnlOverlay();
                 };
                 reader.readAsDataURL(file);
             }
@@ -650,6 +646,46 @@
             document.getElementById('backgroundUpload').value = '';
         }
 
+        function updatePnlOverlay() {
+            if (!customBackgroundSet) return;
+            
+            const invested = parseFloat(document.getElementById('invested').value) || 1.98;
+            const position = parseFloat(document.getElementById('position').value) || 24.5;
+            const rawProfit = position - invested;
+            const isProfit = rawProfit >= 0;
+            
+            const pnlOverlay = document.getElementById('pnlOverlay');
+            
+            if (isProfit) {
+                pnlOverlay.src = 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6834a8a45948936715329db3_customwinner.png';
+            } else {
+                pnlOverlay.src = 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6834a8a45948936715329daf_customloser.png';
+            }
+            
+            pnlOverlay.style.display = 'block';
+        }
+
+        // Profile picture upload functionality
+        function handlePfpUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const profilePic = document.getElementById('profilePic');
+                    const cardPreview = document.getElementById('cardPreview');
+                    
+                    profilePic.src = e.target.result;
+                    profilePic.style.display = 'block';
+                    profilePicSet = true;
+                    
+                    if (!customBackgroundSet) {
+                        cardPreview.style.backgroundImage = "url('https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6834abe3c3dd94c4b9edb035_FINALPNLCARDdddd%20(1).png')";
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
         function resetPfp() {
             const profilePic = document.getElementById('profilePic');
             const cardPreview = document.getElementById('cardPreview');
@@ -659,105 +695,55 @@
             profilePicSet = false;
             document.getElementById('pfpUpload').value = '';
             
-            // Switch to background without orange square
-            cardPreview.style.backgroundImage = "url('https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6834abe3c3dd94c4b9edb035_FINALPNLCARDdddd%20(1).png')";
-        }
-
-        function handlePfpUpload(event) {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const profilePic = document.getElementById('profilePic');
-            const cardPreview = document.getElementById('cardPreview');
-            
-            profilePic.src = e.target.result;
-            profilePic.style.display = 'block';
-            profilePicSet = true;
-            
-            // Always switch to background without orange square when pfp is uploaded
             if (!customBackgroundSet) {
                 cardPreview.style.backgroundImage = "url('https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6834abe3c3dd94c4b9edb035_FINALPNLCARDdddd%20(1).png')";
             }
-        };
-        reader.readAsDataURL(file);
-    }
-}
-
-        function updatePnlOverlay() {
-    if (!customBackgroundSet) return;
-    
-    const invested = parseFloat(document.getElementById('invested').value) || 1.98;
-    const position = parseFloat(document.getElementById('position').value) || 24.5;
-    const rawProfit = position - invested; // Use raw calculation
-    const isProfit = rawProfit >= 0; // Check if raw profit is positive
-    
-    const pnlOverlay = document.getElementById('pnlOverlay');
-    
-    if (isProfit) {
-        // Use green profit overlay
-        pnlOverlay.src = 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6834a8a45948936715329db3_customwinner.png';
-    } else {
-        // Use red loss overlay
-        pnlOverlay.src = 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6834a8a45948936715329daf_customloser.png';
-    }
-    
-    pnlOverlay.style.display = 'block';
-}
+        }
 
         function updatePreview() {
-   const coinName = document.getElementById('coinName').value || 'FAKECOIN';
-   const invested = parseFloat(document.getElementById('invested').value) || 1.98;
-   const position = parseFloat(document.getElementById('position').value) || 24.5;
-   const username = document.getElementById('username').value || '@TEMPLATE';
-   
-   // Calculate SOL profit (position - invested)
-   const solProfitRaw = position - invested; // Keep original for profit/loss logic
-   const solProfit = Math.abs(solProfitRaw); // Display as positive number
-   const ticker = solProfit.toFixed(2);
-   
-   // Calculate percentage using the raw value
-   const percentage = invested > 0 ? ((position - invested) / invested * 100) : 0;
-   const isPositive = percentage >= 0; // This will still detect losses correctly
-   
-   // Update preview
-   document.getElementById('coinNameText').textContent = coinName.toUpperCase();
-   document.getElementById('tickerText').textContent = ticker;
-   document.getElementById('ticker').value = ticker; // Update the input field
-   document.getElementById('investedValue').textContent = `${invested.toFixed(2)}`;
-   document.getElementById('positionValue').textContent = `${position.toFixed(2)}`;
-   document.getElementById('usernameText').textContent = username;
-   
-   const percentageElement = document.getElementById('percentageText');
-   percentageElement.textContent = `${isPositive ? '+' : ''}${percentage.toFixed(2)}%`;
-   percentageElement.className = `draggable-text percentage ${isPositive ? '' : 'negative'}`;
-   
-   // Change default background based on profit/loss (only if no custom background)
-   if (!customBackgroundSet) {
-       const cardPreview = document.getElementById('cardPreview');
-       if (isPositive) {
-           // Profit = use green default template
-           cardPreview.style.backgroundImage = "url('https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/683495c0f008abc19b88aaf3_FINALPNLCARDdddd.png')";
-       } else {
-           // Loss = use red default template  
-           cardPreview.style.backgroundImage = "url('https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6834b42b6cf4d19f455182aa_FINALPNLCARDdddd%20(1)%20(1).png')";
-       }
-   }
-   
-   // Update PNL overlay if custom background is set
-   updatePnlOverlay();
-}
-   
-   // Update PNL overlay if custom background is set
-   updatePnlOverlay();
-}
+            const coinName = document.getElementById('coinName').value || 'FAKECOIN';
+            const invested = parseFloat(document.getElementById('invested').value) || 1.98;
+            const position = parseFloat(document.getElementById('position').value) || 24.5;
+            const username = document.getElementById('username').value || '@TEMPLATE';
+            
+            // Calculate SOL profit (position - invested)
+            const solProfitRaw = position - invested;
+            const solProfit = Math.abs(solProfitRaw);
+            const ticker = solProfit.toFixed(2);
+            
+            // Calculate percentage
+            const percentage = invested > 0 ? ((position - invested) / invested * 100) : 0;
+            const isPositive = solProfitRaw >= 0;
+            
+            // Update preview
+            document.getElementById('coinNameText').textContent = coinName.toUpperCase();
+            document.getElementById('tickerText').textContent = ticker;
+            document.getElementById('ticker').value = ticker;
+            document.getElementById('investedValue').textContent = `${invested.toFixed(2)}`;
+            document.getElementById('positionValue').textContent = `${position.toFixed(2)}`;
+            document.getElementById('usernameText').textContent = username;
+            
+            const percentageElement = document.getElementById('percentageText');
+            percentageElement.textContent = `${isPositive ? '+' : ''}${percentage.toFixed(2)}%`;
+            percentageElement.className = `draggable-text percentage ${isPositive ? '' : 'negative'}`;
+            
+            // Change default background based on profit/loss (only if no custom background)
+            if (!customBackgroundSet) {
+                const cardPreview = document.getElementById('cardPreview');
+                if (isPositive) {
+                    cardPreview.style.backgroundImage = "url('https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/683495c0f008abc19b88aaf3_FINALPNLCARDdddd.png')";
+                } else {
+                    cardPreview.style.backgroundImage = "url('https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6834b42b6cf4d19f455182aa_FINALPNLCARDdddd%20(1)%20(1).png')";
+                }
+            }
+            
+            updatePnlOverlay();
+        }
 
         async function downloadCard() {
             try {
-                // Get the card preview element
                 const cardElement = document.getElementById('cardPreview');
                 
-                // Use html2canvas to capture the exact preview
                 const canvas = await html2canvas(cardElement, {
                     width: 840,
                     height: 570,
@@ -768,10 +754,8 @@
                     logging: false
                 });
                 
-                // Get current values for filename
                 const coinName = document.getElementById('coinName').value || 'FAKECOIN';
                 
-                // Download the screenshot
                 const link = document.createElement('a');
                 link.download = `${coinName}_PNL_Card.png`;
                 link.href = canvas.toDataURL('image/png', 1.0);
@@ -779,90 +763,10 @@
                 
             } catch (error) {
                 console.error('Screenshot failed:', error);
-                // Fallback to manual canvas method if html2canvas fails
-                downloadCardManual();
             }
         }
-
-        async function downloadCardManual() {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = 840;
-            canvas.height = 570;
-            
-            // Get current values
-            const coinName = document.getElementById('coinName').value || 'FAKECOIN';
-            const ticker = document.getElementById('ticker').value || '22.52';
-            const invested = parseFloat(document.getElementById('invested').value) || 1.98;
-            const position = parseFloat(document.getElementById('position').value) || 24.5;
-            const username = document.getElementById('username').value || '@TEMPLATE';
-            const percentage = invested > 0 ? ((position - invested) / invested * 100) : 0;
-            const isPositive = percentage >= 0;
-            
-            // Determine which background to use
-            const customBg = document.getElementById('customBackground');
-            const backgroundSrc = customBackgroundSet && customBg.src ? 
-                customBg.src : 
-                'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/683495c0f008abc19b88aaf3_FINALPNLCARDdddd.png';
-            
-            // Load and draw background image
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-            
-            return new Promise((resolve) => {
-                img.onload = function() {
-                    // Draw background (will resize to fit)
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    
-                    ctx.textAlign = 'left';
-                    ctx.textBaseline = 'hanging';
-                    
-                    // Get current positions of all elements and use them for download
-                    const elements = {
-                        coinName: document.getElementById('coinNameText'),
-                        ticker: document.getElementById('tickerText'),
-                        investedValue: document.getElementById('investedValue'),
-                        positionValue: document.getElementById('positionValue'),
-                        percentage: document.getElementById('percentageText'),
-                        username: document.getElementById('usernameText')
-                    };
-                    
-                    // Draw text at current element positions
-                    ctx.font = '500 41px Geist-Medium, Inter, sans-serif';
-                    ctx.fillStyle = 'white';
-                    ctx.fillText(coinName.toUpperCase(), elements.coinName.offsetLeft, elements.coinName.offsetTop);
-                    
-                    ctx.font = '600 57px Geist-SemiBold, Inter, sans-serif';
-                    ctx.fillStyle = 'black';
-                    ctx.fillText(ticker.toUpperCase(), elements.ticker.offsetLeft, elements.ticker.offsetTop);
-                    
-                    ctx.font = '400 28px Geist-Regular, Inter, sans-serif';
-                    ctx.fillStyle = 'white';
-                    ctx.fillText(`${invested.toFixed(2)}`, elements.investedValue.offsetLeft, elements.investedValue.offsetTop);
-                    ctx.fillText(`${position.toFixed(2)}`, elements.positionValue.offsetLeft, elements.positionValue.offsetTop);
-                    
-                    ctx.font = '400 27px Geist-Regular, Inter, sans-serif';
-                    ctx.fillStyle = isPositive ? '#2fe3ac' : '#ff4444';
-                    ctx.fillText(`${isPositive ? '+' : ''}${percentage.toFixed(2)}%`, elements.percentage.offsetLeft, elements.percentage.offsetTop);
-                    
-                    ctx.font = '500 41px Geist-Medium, Inter, sans-serif';
-                    ctx.fillStyle = 'white';
-                    ctx.fillText(username, elements.username.offsetLeft, elements.username.offsetTop);
-                    
-                    // Download
-                    const link = document.createElement('a');
-                    link.download = `${coinName}_PNL_Card.png`;
-                    link.href = canvas.toDataURL('image/png', 1.0);
-                    link.click();
-                    
-                    resolve();
-                };
-                
-                img.src = backgroundSrc;
-            });
-        }
         
-        // Add event listeners (removed ticker input listener since it's auto-calculated)
+        // Add event listeners
         document.getElementById('coinName').addEventListener('input', updatePreview);
         document.getElementById('invested').addEventListener('input', updatePreview);
         document.getElementById('position').addEventListener('input', updatePreview);
@@ -870,7 +774,6 @@
         
         // Initialize
         updatePreview();
-        updateCoordinates();
     </script>
 </body>
 </html>
