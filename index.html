@@ -158,6 +158,36 @@
             flex-shrink: 0;
         }
 
+        /* Transparent overlay for text alignment */
+        .text-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/683499543ce2d2324619f450_token-pnl%20(1)%20(2).png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.7;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .overlay-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 255, 249, 0.8);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 12px;
+            cursor: pointer;
+            z-index: 20;
+        }
+
         /* Draggable text elements */
         .draggable-text {
             position: absolute;
@@ -191,7 +221,7 @@
             font-family: 'Geist-SemiBold', 'Inter', sans-serif;
             font-weight: 600;
             font-size: 57px;
-            color: white;
+            color: black;
             top: 85px;
             left: 60px;
         }
@@ -357,13 +387,13 @@
         
         <div class="card-container">
             <div class="card-preview" id="cardPreview">
+                <div class="text-overlay" id="textOverlay"></div>
+                <button class="overlay-toggle" onclick="toggleOverlay()">Toggle Overlay</button>
+                
                 <div class="draggable-text coin-name" id="coinNameText" data-name="coinName">FAKECOIN</div>
                 <div class="draggable-text ticker" id="tickerText" data-name="ticker">STONKS</div>
                 
-                <div class="draggable-text pnl-label" id="pnlLabel" data-name="pnlLabel">PNL</div>
-                <div class="draggable-text invested-label" id="investedLabel" data-name="investedLabel">Invested</div>
                 <div class="draggable-text invested-value" id="investedValue" data-name="investedValue">$1.98</div>
-                <div class="draggable-text position-label" id="positionLabel" data-name="positionLabel">Position</div>
                 <div class="draggable-text position-value" id="positionValue" data-name="positionValue">$24.5</div>
                 
                 <div class="draggable-text percentage" id="percentageText" data-name="percentage">+1137%</div>
@@ -383,6 +413,19 @@
         let isDragging = false;
         let currentElement = null;
         let offset = { x: 0, y: 0 };
+
+        function toggleOverlay() {
+            const overlay = document.getElementById('textOverlay');
+            const btn = document.querySelector('.overlay-toggle');
+            
+            if (overlay.style.display === 'none') {
+                overlay.style.display = 'block';
+                btn.textContent = 'Hide Overlay';
+            } else {
+                overlay.style.display = 'none';
+                btn.textContent = 'Show Overlay';
+            }
+        }
 
         function togglePositionMode() {
             positionModeEnabled = !positionModeEnabled;
