@@ -546,14 +546,14 @@
                     </div>
 
                     <div class="background-section">
-                        <label>Position Mode:</label>
-                        <button class="win98-button" id="positionMode" onclick="togglePositionMode()" style="width: 100%;">
-                            Enable Position Mode
-                        </button>
-                        <div style="font-size: 10px; margin-top: 5px; color: #666;">
-                            Enable to drag text elements for positioning
-                        </div>
-                    </div>
+    <label>Referral Code:</label>
+    <button class="win98-button" style="width: 100%; background: #a0a0a0; color: #666; cursor: not-allowed;" disabled>
+        🔒 Get Referral Code
+    </button>
+    <div style="font-size: 10px; margin-top: 5px; color: #666;">
+        Feature coming soon...
+    </div>
+</div>
                     
                     <button class="win98-button primary" onclick="downloadCard()" style="width: 100%; margin-top: 15px;">
                         Download P&L Card
@@ -586,7 +586,7 @@
         </div>
 
         <!-- Coordinates Display - Hidden by default -->
-        <div id="coordinatesDisplay" style="position: fixed; bottom: 40px; left: 10px; right: 10px; background: rgba(0,0,0,0.8); color: #00fff9; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 10px; z-index: 1001; max-height: 150px; overflow-y: auto; display: none;">
+        <div id="coordinatesDisplay" style="display: none !important;">
             <strong>Current Coordinates (top, left, right, bottom):</strong><br>
             <div id="coordList"></div>
         </div>
@@ -605,13 +605,6 @@
 </div>
 
     <script>
-        let customBackgroundSet = false;
-        let profilePicSet = false;
-        let positionModeEnabled = false;
-        let isDragging = false;
-        let currentElement = null;
-        let offset = { x: 0, y: 0 };
-
         // Update taskbar time
         function updateTime() {
             const now = new Date();
@@ -629,119 +622,7 @@
         function openPumpFun() {
             window.open('https://pump.fun', '_blank');
         }
-
-        // Position Mode Functions
-        function togglePositionMode() {
-            positionModeEnabled = !positionModeEnabled;
-            const btn = document.getElementById('positionMode');
-            const draggableElements = document.querySelectorAll('.draggable-text');
-            const coordDisplay = document.getElementById('coordinatesDisplay');
-            
-            if (positionModeEnabled) {
-                btn.textContent = 'Disable Position Mode';
-                btn.style.background = '#ff6b6b';
-                coordDisplay.style.display = 'block'; // Show coordinates when positioning
-                draggableElements.forEach(el => {
-                    el.style.pointerEvents = 'auto';
-                });
-                enableDragging();
-            } else {
-                btn.textContent = 'Enable Position Mode';
-                btn.style.background = '#c0c0c0';
-                coordDisplay.style.display = 'none'; // Hide coordinates when not positioning
-                draggableElements.forEach(el => {
-                    el.style.pointerEvents = 'none';
-                    el.classList.remove('dragging');
-                });
-                disableDragging();
-            }
-            updateCoordinates();
-        }
-
-        function enableDragging() {
-            const draggableElements = document.querySelectorAll('.draggable-text');
-            
-            draggableElements.forEach(element => {
-                element.addEventListener('mousedown', startDrag);
-            });
-            
-            document.addEventListener('mousemove', drag);
-            document.addEventListener('mouseup', stopDrag);
-        }
-
-        function disableDragging() {
-            const draggableElements = document.querySelectorAll('.draggable-text');
-            
-            draggableElements.forEach(element => {
-                element.removeEventListener('mousedown', startDrag);
-            });
-            
-            document.removeEventListener('mousemove', drag);
-            document.removeEventListener('mouseup', stopDrag);
-        }
-
-        function startDrag(e) {
-            if (!positionModeEnabled) return;
-            
-            isDragging = true;
-            currentElement = e.target;
-            currentElement.classList.add('dragging');
-            
-            const rect = currentElement.getBoundingClientRect();
-            const cardRect = document.getElementById('cardPreview').getBoundingClientRect();
-            
-            offset.x = e.clientX - rect.left;
-            offset.y = e.clientY - rect.top;
-            
-            e.preventDefault();
-        }
-
-        function drag(e) {
-            if (!isDragging || !currentElement) return;
-            
-            const cardRect = document.getElementById('cardPreview').getBoundingClientRect();
-            
-            let newX = e.clientX - cardRect.left - offset.x;
-            let newY = e.clientY - cardRect.top - offset.y;
-            
-            // Keep element within card bounds
-            newX = Math.max(0, Math.min(newX, 840 - currentElement.offsetWidth));
-            newY = Math.max(0, Math.min(newY, 570 - currentElement.offsetHeight));
-            
-            currentElement.style.left = newX + 'px';
-            currentElement.style.top = newY + 'px';
-            currentElement.style.right = 'auto';
-            currentElement.style.bottom = 'auto';
-            
-            updateCoordinates();
-        }
-
-        function stopDrag() {
-            if (currentElement) {
-                currentElement.classList.remove('dragging');
-            }
-            isDragging = false;
-            currentElement = null;
-        }
-
-        function updateCoordinates() {
-            const coordList = document.getElementById('coordList');
-            const elements = document.querySelectorAll('.draggable-text');
-            let coordText = '';
-            
-            elements.forEach(element => {
-                const name = element.dataset.name;
-                const top = Math.round(element.offsetTop);
-                const left = Math.round(element.offsetLeft);
-                const right = Math.round(840 - element.offsetLeft - element.offsetWidth);
-                const bottom = Math.round(570 - element.offsetTop - element.offsetHeight);
-                
-                coordText += `<div>${name}: top: ${top}px, left: ${left}px, right: ${right}px, bottom: ${bottom}px</div>`;
-            });
-            
-            coordList.innerHTML = coordText;
-        }
-
+        
         // Background upload functionality
         function handleBackgroundUpload(event) {
             const file = event.target.files[0];
