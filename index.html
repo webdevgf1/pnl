@@ -544,8 +544,8 @@
             </div>
         </div>
 
-        <!-- Coordinates Display -->
-        <div style="position: fixed; bottom: 40px; left: 10px; right: 10px; background: rgba(0,0,0,0.8); color: #00fff9; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 10px; z-index: 1001; max-height: 150px; overflow-y: auto;">
+        <!-- Coordinates Display - Hidden by default -->
+        <div id="coordinatesDisplay" style="position: fixed; bottom: 40px; left: 10px; right: 10px; background: rgba(0,0,0,0.8); color: #00fff9; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 10px; z-index: 1001; max-height: 150px; overflow-y: auto; display: none;">
             <strong>Current Coordinates (top, left, right, bottom):</strong><br>
             <div id="coordList"></div>
         </div>
@@ -590,10 +590,12 @@
             positionModeEnabled = !positionModeEnabled;
             const btn = document.getElementById('positionMode');
             const draggableElements = document.querySelectorAll('.draggable-text');
+            const coordDisplay = document.getElementById('coordinatesDisplay');
             
             if (positionModeEnabled) {
                 btn.textContent = 'Disable Position Mode';
                 btn.style.background = '#ff6b6b';
+                coordDisplay.style.display = 'block'; // Show coordinates when positioning
                 draggableElements.forEach(el => {
                     el.style.pointerEvents = 'auto';
                 });
@@ -601,6 +603,7 @@
             } else {
                 btn.textContent = 'Enable Position Mode';
                 btn.style.background = '#c0c0c0';
+                coordDisplay.style.display = 'none'; // Hide coordinates when not positioning
                 draggableElements.forEach(el => {
                     el.style.pointerEvents = 'none';
                     el.classList.remove('dragging');
