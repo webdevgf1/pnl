@@ -710,14 +710,15 @@
             const invested = parseFloat(document.getElementById('invested').value) || 1.98;
             const position = parseFloat(document.getElementById('position').value) || 24.5;
             const username = document.getElementById('username').value || '@TEMPLATE';
-            
+
             // Calculate SOL profit (position - invested)
-            const solProfit = Math.abs(position - invested);
+const solProfitRaw = position - invested; // Keep original for profit/loss logic
+const solProfit = Math.abs(solProfitRaw); // Display as positive number
 const ticker = solProfit.toFixed(2);
-            
-            // Calculate percentage
-            const percentage = invested > 0 ? ((position - invested) / invested * 100) : 0;
-            const isPositive = percentage >= 0;
+
+// Calculate percentage using the raw value
+const percentage = invested > 0 ? ((position - invested) / invested * 100) : 0;
+const isPositive = percentage >= 0; // This will still detect losses correctly
             
             // Update preview
             document.getElementById('coinNameText').textContent = coinName.toUpperCase();
