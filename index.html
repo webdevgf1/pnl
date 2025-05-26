@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WENRICH: PNL Card Generator</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
@@ -785,30 +786,110 @@
         }
 
         async function downloadCard() {
-            try {
-                const cardElement = document.getElementById('cardPreview');
-                
-                const canvas = await html2canvas(cardElement, {
-                    width: 840,
-                    height: 570,
-                    scale: 1,
-                    useCORS: true,
-                    allowTaint: true,
-                    backgroundColor: null,
-                    logging: false
-                });
-                
-                const coinName = document.getElementById('coinName').value || 'FAKECOIN';
-                
-                const link = document.createElement('a');
-                link.download = `${coinName}_PNL_Card.png`;
-                link.href = canvas.toDataURL('image/png', 1.0);
-                link.click();
-                
-            } catch (error) {
-                console.error('Screenshot failed:', error);
-            }
+    const coinName = document.getElementById('coinName').value || 'FAKECOIN';
+    const customBg = document.getElementById('customBackground');
+    const isUsingGif = customBackgroundSet && customBg.src && 
+                      (customBg.src.toLowerCase().includes('.gif') || 
+                       customBg.src.includes('data:image/gif'));
+    
+    if (isUsingGif) {
+        await downloadAnimatedGif(coinName);
+    } else {
+        await downloadStaticPng(coinName);
+    }
+}
+
+async function downloadAnimatedGif(coinName) {
+    const downloadBtn = document.querySelector('.win98-button.primary');
+    const originalText = downloadBtn.textContent;
+    
+    // Show loading state
+    downloadBtn.textContent = 'Creating GIF...';
+    downloadBtn.disabled = true;
+    
+    const gif = new GIF({
+        workers: 2,
+        quality: 10,
+        width: 840,
+        height: 570,
+        repeat: 0
+    });
+    
+    const cardElement = document.getElementById('cardPreview');
+    const frameCount = 15;
+    const frameDelay = 150;
+    
+    try {
+        // Capture frames
+        for (let i = 0; i < frameCount; i++) {
+            await new Promise(resolve => setTimeout(resolve, frameDelay));
+            
+            const canvas = await html2canvas(cardElement, {
+                width: 840,
+                height: 570,
+                scale: 1,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: null,
+                logging: false
+            });
+            
+            gif.addFrame(canvas, {delay: frameDelay});
+            
+            // Update button with progress
+            downloadBtn.textContent = `Capturing... ${i + 1}/${frameCount}`;
         }
+        
+        downloadBtn.textContent = 'Processing GIF...';
+        
+        gif.on('finished', function(blob) {
+            const link = document.createElement('a');
+            link.download = `${coinName}_PNL_Card.gif`;
+            link.href = URL.createObjectURL(blob);
+            link.click();
+            
+            // Reset button
+            downloadBtn.textContent = originalText;
+            downloadBtn.disabled = false;
+        });
+        
+        gif.on('progress', function(p) {
+            downloadBtn.textContent = `Processing... ${Math.round(p * 100)}%`;
+        });
+        
+        gif.render();
+        
+    } catch (error) {
+        console.error('GIF creation failed:', error);
+        downloadBtn.textContent = originalText;
+        downloadBtn.disabled = false;
+        alert('GIF creation failed. Try downloading as PNG instead.');
+    }
+}
+
+async function downloadStaticPng(coinName) {
+    try {
+        const cardElement = document.getElementById('cardPreview');
+        
+        const canvas = await html2canvas(cardElement, {
+            width: 840,
+            height: 570,
+            scale: 1,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: null,
+            logging: false
+        });
+        
+        const link = document.createElement('a');
+        link.download = `${coinName}_PNL_Card.png`;
+        link.href = canvas.toDataURL('image/png', 1.0);
+        link.click();
+        
+    } catch (error) {
+        console.error('PNG download failed:', error);
+    }
+}
         
         // Add event listeners
         document.getElementById('coinName').addEventListener('input', updatePreview);
