@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memecoin P&L Card Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .form-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .preview-section {
+            position: sticky;
+            top: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #00fff9, #0099ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            grid-column: 1 / -1;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #00fff9;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #00fff9;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .card-container {
+            position: relative;
+            width: 500px;
+            height: 300px;
+            margin: 0 auto;
+        }
+
+        .card-preview {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-image: url('https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/683495c0f008abc19b88aaf3_FINALPNLCARDdddd.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        /* Text overlays positioned exactly like your PSD */
+        .coin-name {
+            position: absolute;
+            top: 35px;
+            left: 60px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500; /* Medium */
+            font-size: 41px;
+            color: white;
+            line-height: 1;
+        }
+
+        .ticker {
+            position: absolute;
+            top: 85px;
+            left: 60px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600; /* SemiBold */
+            font-size: 57px;
+            color: white;
+            line-height: 1;
+        }
+
+        .pnl-label {
+            position: absolute;
+            top: 155px;
+            left: 75px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: white;
+            line-height: 1;
+        }
+
+        .invested-label {
+            position: absolute;
+            top: 185px;
+            left: 75px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1;
+        }
+
+        .invested-value {
+            position: absolute;
+            top: 205px;
+            left: 75px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 28px;
+            color: white;
+            line-height: 1;
+        }
+
+        .position-label {
+            position: absolute;
+            top: 235px;
+            left: 75px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1;
+        }
+
+        .position-value {
+            position: absolute;
+            top: 255px;
+            left: 75px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 28px;
+            color: white;
+            line-height: 1;
+        }
+
+        .percentage {
+            position: absolute;
+            top: 155px;
+            right: 60px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 27px;
+            color: #2fe3ac;
+            line-height: 1;
+        }
+
+        .percentage.negative {
+            color: #ff4444;
+        }
+
+        .username {
+            position: absolute;
+            bottom: 40px;
+            left: 60px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 41px;
+            color: white;
+            line-height: 1;
+        }
+
+        .download-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #00fff9, #0099ff);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.3s;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .card-container {
+                width: 100%;
+                max-width: 400px;
+                height: 240px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            /* Scale down text for mobile */
+            .coin-name { font-size: 32px; top: 28px; left: 48px; }
+            .ticker { font-size: 45px; top: 68px; left: 48px; }
+            .pnl-label { font-size: 13px; top: 124px; left: 60px; }
+            .invested-label { font-size: 11px; top: 148px; left: 60px; }
+            .invested-value { font-size: 22px; top: 164px; left: 60px; }
+            .position-label { font-size: 11px; top: 188px; left: 60px; }
+            .position-value { font-size: 22px; top: 204px; left: 60px; }
+            .percentage { font-size: 22px; top: 124px; right: 48px; }
+            .username { font-size: 32px; bottom: 32px; left: 48px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Memecoin P&L Card Generator</h1>
+        
+        <div class="form-section">
+            <form id="pnlForm">
+                <div class="form-group">
+                    <label for="coinName">Coin Name</label>
+                    <input type="text" id="coinName" placeholder="e.g., FAKECOIN" value="FAKECOIN">
+                </div>
+                
+                <div class="form-group">
+                    <label for="ticker">Ticker Symbol</label>
+                    <input type="text" id="ticker" placeholder="e.g., STONKS" value="STONKS">
+                </div>
+                
+                <div class="form-group">
+                    <label for="invested">Amount Invested</label>
+                    <input type="number" id="invested" placeholder="e.g., 1.98" step="0.01" value="1.98">
+                </div>
+                
+                <div class="form-group">
+                    <label for="position">Current Position Value</label>
+                    <input type="number" id="position" placeholder="e.g., 24.5" step="0.01" value="24.5">
+                </div>
+                
+                <div class="form-group">
+                    <label for="username">Username/Handle</label>
+                    <input type="text" id="username" placeholder="e.g., @yourusername" value="@TEMPLATE">
+                </div>
+                
+                <button type="button" class="download-btn" onclick="downloadCard()">
+                    Download P&L Card
+                </button>
+            </form>
+        </div>
+        
+        <div class="preview-section">
+            <div class="card-container">
+                <div class="card-preview">
+                    <div class="coin-name" id="previewCoinName">FAKECOIN</div>
+                    <div class="ticker" id="previewTicker">STONKS</div>
+                    
+                    <div class="pnl-label">PNL</div>
+                    <div class="invested-label">Invested</div>
+                    <div class="invested-value" id="previewInvested">$1.98</div>
+                    <div class="position-label">Position</div>
+                    <div class="position-value" id="previewPosition">$24.5</div>
+                    
+                    <div class="percentage" id="previewPercentage">+1137%</div>
+                    
+                    <div class="username" id="previewUsername">@TEMPLATE</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updatePreview() {
+            const coinName = document.getElementById('coinName').value || 'FAKECOIN';
+            const ticker = document.getElementById('ticker').value || 'STONKS';
+            const invested = parseFloat(document.getElementById('invested').value) || 1.98;
+            const position = parseFloat(document.getElementById('position').value) || 24.5;
+            const username = document.getElementById('username').value || '@TEMPLATE';
+            
+            // Calculate percentage
+            const percentage = invested > 0 ? ((position - invested) / invested * 100) : 0;
+            const isPositive = percentage >= 0;
+            
+            // Update preview
+            document.getElementById('previewCoinName').textContent = coinName.toUpperCase();
+            document.getElementById('previewTicker').textContent = ticker.toUpperCase();
+            document.getElementById('previewInvested').textContent = `$${invested.toFixed(2)}`;
+            document.getElementById('previewPosition').textContent = `$${position.toFixed(2)}`;
+            document.getElementById('previewUsername').textContent = username;
+            
+            const percentageElement = document.getElementById('previewPercentage');
+            percentageElement.textContent = `${isPositive ? '+' : ''}${percentage.toFixed(0)}%`;
+            percentageElement.className = `percentage ${isPositive ? '' : 'negative'}`;
+        }
+        
+        // Add event listeners to update preview in real-time
+        document.getElementById('coinName').addEventListener('input', updatePreview);
+        document.getElementById('ticker').addEventListener('input', updatePreview);
+        document.getElementById('invested').addEventListener('input', updatePreview);
+        document.getElementById('position').addEventListener('input', updatePreview);
+        document.getElementById('username').addEventListener('input', updatePreview);
+        
+        async function downloadCard() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 1000;
+            canvas.height = 600;
+            
+            // Get current values
+            const coinName = document.getElementById('coinName').value || 'FAKECOIN';
+            const ticker = document.getElementById('ticker').value || 'STONKS';
+            const invested = parseFloat(document.getElementById('invested').value) || 1.98;
+            const position = parseFloat(document.getElementById('position').value) || 24.5;
+            const username = document.getElementById('username').value || '@TEMPLATE';
+            const percentage = invested > 0 ? ((position - invested) / invested * 100) : 0;
+            const isPositive = percentage >= 0;
+            
+            // Load and draw background image
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            
+            return new Promise((resolve) => {
+                img.onload = function() {
+                    // Draw background
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    // Set font properties to match your PSD exactly
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'top';
+                    
+                    // Coin name - Geist-Medium 41px
+                    ctx.font = '500 82px Inter, sans-serif';
+                    ctx.fillStyle = 'white';
+                    ctx.fillText(coinName.toUpperCase(), 120, 70);
+                    
+                    // Ticker - Geist-SemiBold 57px
+                    ctx.font = '600 114px Inter, sans-serif';
+                    ctx.fillStyle = 'white';
+                    ctx.fillText(ticker.toUpperCase(), 120, 170);
+                    
+                    // PNL Label
+                    ctx.font = '400 32px Inter, sans-serif';
+                    ctx.fillStyle = 'white';
+                    ctx.fillText('PNL', 150, 310);
+                    
+                    // Invested label and value
+                    ctx.font = '400 28px Inter, sans-serif';
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                    ctx.fillText('Invested', 150, 370);
+                    ctx.font = '400 56px Inter, sans-serif';
+                    ctx.fillStyle = 'white';
+                    ctx.fillText(`$${invested.toFixed(2)}`, 150, 410);
+                    
+                    // Position label and value
+                    ctx.font = '400 28px Inter, sans-serif';
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                    ctx.fillText('Position', 150, 470);
+                    ctx.font = '400 56px Inter, sans-serif';
+                    ctx.fillStyle = 'white';
+                    ctx.fillText(`$${position.toFixed(2)}`, 150, 510);
+                    
+                    // Percentage - Geist-Regular 27px
+                    ctx.font = '400 54px Inter, sans-serif';
+                    ctx.fillStyle = isPositive ? '#2fe3ac' : '#ff4444';
+                    ctx.textAlign = 'right';
+                    ctx.fillText(`${isPositive ? '+' : ''}${percentage.toFixed(0)}%`, canvas.width - 120, 310);
+                    
+                    // Username - Geist-Medium 41px
+                    ctx.font = '500 82px Inter, sans-serif';
+                    ctx.fillStyle = 'white';
+                    ctx.textAlign = 'left';
+                    ctx.fillText(username, 120, 520);
+                    
+                    // Download
+                    const link = document.createElement('a');
+                    link.download = `${coinName}_PNL_Card.png`;
+                    link.href = canvas.toDataURL('image/png', 1.0);
+                    link.click();
+                    
+                    resolve();
+                };
+                
+                img.src = 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/683495c0f008abc19b88aaf3_FINALPNLCARDdddd.png';
+            });
+        }
+        
+        // Initialize preview
+        updatePreview();
+    </script>
+</body>
+</html>
