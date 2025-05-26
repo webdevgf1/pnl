@@ -770,7 +770,7 @@
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                     
                     ctx.textAlign = 'left';
-                    ctx.textBaseline = 'top';
+                    ctx.textBaseline = 'hanging';
                     
                     // Get current positions of all elements and use them for download
                     const elements = {
@@ -782,30 +782,27 @@
                         username: document.getElementById('usernameText')
                     };
                     
-                    // Add offset compensation to match CSS positioning exactly
-                    const yOffset = 0; // Adjust this if needed
-                    
-                    // Draw text at current element positions with potential offset correction
+                    // Draw text at current element positions
                     ctx.font = '500 41px Geist-Medium, Inter, sans-serif';
                     ctx.fillStyle = 'white';
-                    ctx.fillText(coinName.toUpperCase(), elements.coinName.offsetLeft, elements.coinName.offsetTop + yOffset);
+                    ctx.fillText(coinName.toUpperCase(), elements.coinName.offsetLeft, elements.coinName.offsetTop);
                     
                     ctx.font = '600 57px Geist-SemiBold, Inter, sans-serif';
                     ctx.fillStyle = 'black';
-                    ctx.fillText(ticker.toUpperCase(), elements.ticker.offsetLeft, elements.ticker.offsetTop + yOffset);
+                    ctx.fillText(ticker.toUpperCase(), elements.ticker.offsetLeft, elements.ticker.offsetTop);
                     
                     ctx.font = '400 28px Geist-Regular, Inter, sans-serif';
                     ctx.fillStyle = 'white';
-                    ctx.fillText(`${invested.toFixed(2)}`, elements.investedValue.offsetLeft, elements.investedValue.offsetTop + yOffset);
-                    ctx.fillText(`${position.toFixed(2)}`, elements.positionValue.offsetLeft, elements.positionValue.offsetTop + yOffset);
+                    ctx.fillText(`${invested.toFixed(2)}`, elements.investedValue.offsetLeft, elements.investedValue.offsetTop);
+                    ctx.fillText(`${position.toFixed(2)}`, elements.positionValue.offsetLeft, elements.positionValue.offsetTop);
                     
                     ctx.font = '400 27px Geist-Regular, Inter, sans-serif';
                     ctx.fillStyle = isPositive ? '#2fe3ac' : '#ff4444';
-                    ctx.fillText(`${isPositive ? '+' : ''}${percentage.toFixed(2)}%`, elements.percentage.offsetLeft, elements.percentage.offsetTop + yOffset);
+                    ctx.fillText(`${isPositive ? '+' : ''}${percentage.toFixed(2)}%`, elements.percentage.offsetLeft, elements.percentage.offsetTop);
                     
                     ctx.font = '500 41px Geist-Medium, Inter, sans-serif';
                     ctx.fillStyle = 'white';
-                    ctx.fillText(username, elements.username.offsetLeft, elements.username.offsetTop + yOffset);
+                    ctx.fillText(username, elements.username.offsetLeft, elements.username.offsetTop);
                     
                     // Download
                     const link = document.createElement('a');
