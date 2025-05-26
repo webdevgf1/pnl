@@ -393,8 +393,8 @@
                 <div class="draggable-text coin-name" id="coinNameText" data-name="coinName">FAKECOIN</div>
                 <div class="draggable-text ticker" id="tickerText" data-name="ticker">STONKS</div>
                 
-                <div class="draggable-text invested-value" id="investedValue" data-name="investedValue">$1.98</div>
-                <div class="draggable-text position-value" id="positionValue" data-name="positionValue">$24.5</div>
+                <div class="draggable-text invested-value" id="investedValue" data-name="investedValue">1.98</div>
+                <div class="draggable-text position-value" id="positionValue" data-name="positionValue">24.5</div>
                 
                 <div class="draggable-text percentage" id="percentageText" data-name="percentage">+1137%</div>
                 
@@ -552,8 +552,8 @@
             // Update preview
             document.getElementById('coinNameText').textContent = coinName.toUpperCase();
             document.getElementById('tickerText').textContent = ticker.toUpperCase();
-            document.getElementById('investedValue').textContent = `$${invested.toFixed(2)}`;
-            document.getElementById('positionValue').textContent = `$${position.toFixed(2)}`;
+            document.getElementById('investedValue').textContent = `${invested.toFixed(2)}`;
+            document.getElementById('positionValue').textContent = `${position.toFixed(2)}`;
             document.getElementById('usernameText').textContent = username;
             
             const percentageElement = document.getElementById('percentageText');
