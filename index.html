@@ -847,10 +847,10 @@ async function downloadAnimatedGif(coinName) {
                 height,
                 scale: 1,
                 useCORS: true,
-                backgroundColor: null,
+                backgroundColor: null
             });
 
-            gif.addFrame(canvas, { delay: 200 });
+            gif.addFrame(canvas, { copy: true, delay: 200 });
         }
 
         gif.on('finished', function(blob) {
@@ -863,16 +863,24 @@ async function downloadAnimatedGif(coinName) {
             downloadBtn.disabled = false;
         });
 
+        gif.on('abort', function() {
+            console.error('GIF creation aborted.');
+            alert('GIF export failed. Try again or export as PNG.');
+            downloadBtn.textContent = originalText;
+            downloadBtn.disabled = false;
+        });
+
         gif.render();
 
     } catch (err) {
         console.error('GIF export failed:', err);
-        alert('GIF export failed, downloading PNG instead.');
+        alert('GIF export failed. Downloading PNG instead.');
         await downloadStaticPng(coinName);
         downloadBtn.textContent = originalText;
         downloadBtn.disabled = false;
     }
 }
+
         
 async function downloadStaticPng(coinName) {
     try {
