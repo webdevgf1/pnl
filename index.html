@@ -8,6 +8,27 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
+        @font-face {
+            font-family: 'Geist-Regular';
+            src: url('./fonts/Geist-Regular.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'Geist-Medium';
+            src: url('./fonts/Geist-Medium.otf') format('opentype');
+            font-weight: 500;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'Geist-SemiBold';
+            src: url('./fonts/Geist-SemiBold.otf') format('opentype');
+            font-weight: 600;
+            font-style: normal;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -116,16 +137,17 @@
             background: linear-gradient(45deg, #ff6b6b, #ee5a24);
         }
 
-        /* Card container - actual size */
+        /* Card container - exact PSD size */
         .card-container {
             display: flex;
             justify-content: center;
             margin: 30px 0;
+            overflow-x: auto;
         }
 
         .card-preview {
-            width: 662px; /* Actual size from your PSD */
-            height: 300px; /* Actual size from your PSD */
+            width: 840px; /* Exact PSD size */
+            height: 570px; /* Exact PSD size */
             position: relative;
             background-image: url('https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/683495c0f008abc19b88aaf3_FINALPNLCARDdddd.png');
             background-size: cover;
@@ -133,6 +155,7 @@
             background-repeat: no-repeat;
             border: 2px solid #00fff9;
             cursor: default;
+            flex-shrink: 0;
         }
 
         /* Draggable text elements */
@@ -156,7 +179,7 @@
         }
 
         .coin-name {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Geist-Medium', 'Inter', sans-serif;
             font-weight: 500;
             font-size: 41px;
             color: white;
@@ -165,7 +188,7 @@
         }
 
         .ticker {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Geist-SemiBold', 'Inter', sans-serif;
             font-weight: 600;
             font-size: 57px;
             color: white;
@@ -174,7 +197,7 @@
         }
 
         .pnl-label {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Geist-Regular', 'Inter', sans-serif;
             font-weight: 400;
             font-size: 16px;
             color: white;
@@ -183,7 +206,7 @@
         }
 
         .invested-label {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Geist-Regular', 'Inter', sans-serif;
             font-weight: 400;
             font-size: 14px;
             color: rgba(255, 255, 255, 0.8);
@@ -192,7 +215,7 @@
         }
 
         .invested-value {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Geist-Regular', 'Inter', sans-serif;
             font-weight: 400;
             font-size: 28px;
             color: white;
@@ -201,7 +224,7 @@
         }
 
         .position-label {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Geist-Regular', 'Inter', sans-serif;
             font-weight: 400;
             font-size: 14px;
             color: rgba(255, 255, 255, 0.8);
@@ -210,7 +233,7 @@
         }
 
         .position-value {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Geist-Regular', 'Inter', sans-serif;
             font-weight: 400;
             font-size: 28px;
             color: white;
@@ -219,7 +242,7 @@
         }
 
         .percentage {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Geist-Regular', 'Inter', sans-serif;
             font-weight: 400;
             font-size: 27px;
             color: #2fe3ac;
@@ -232,7 +255,7 @@
         }
 
         .username {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Geist-Medium', 'Inter', sans-serif;
             font-weight: 500;
             font-size: 41px;
             color: white;
@@ -432,8 +455,8 @@
             let newY = e.clientY - cardRect.top - offset.y;
             
             // Keep element within card bounds
-            newX = Math.max(0, Math.min(newX, 662 - currentElement.offsetWidth));
-            newY = Math.max(0, Math.min(newY, 300 - currentElement.offsetHeight));
+            newX = Math.max(0, Math.min(newX, 840 - currentElement.offsetWidth));
+            newY = Math.max(0, Math.min(newY, 570 - currentElement.offsetHeight));
             
             currentElement.style.left = newX + 'px';
             currentElement.style.top = newY + 'px';
@@ -463,8 +486,8 @@
                 
                 const top = Math.round(element.offsetTop);
                 const left = Math.round(element.offsetLeft);
-                const right = Math.round(662 - element.offsetLeft - element.offsetWidth);
-                const bottom = Math.round(300 - element.offsetTop - element.offsetHeight);
+                const right = Math.round(840 - element.offsetLeft - element.offsetWidth);
+                const bottom = Math.round(570 - element.offsetTop - element.offsetHeight);
                 
                 coordText += `<div class="coord-item">${name}: top: ${top}px, left: ${left}px, right: ${right}px, bottom: ${bottom}px</div>`;
             });
@@ -498,8 +521,8 @@
         async function downloadCard() {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            canvas.width = 662;
-            canvas.height = 300;
+            canvas.width = 840;
+            canvas.height = 570;
             
             // Get current values
             const coinName = document.getElementById('coinName').value || 'FAKECOIN';
@@ -534,38 +557,39 @@
                     ctx.textAlign = 'left';
                     ctx.textBaseline = 'top';
                     
-                    // Draw each text element at its current position
-                    // Coin name
-                    ctx.font = '500 41px Inter, sans-serif';
+                    // Draw each text element at its current position using exact Geist fonts
+                    // Coin name - Geist-Medium 41px
+                    ctx.font = '500 41px Geist-Medium, Inter, sans-serif';
                     ctx.fillStyle = 'white';
                     ctx.fillText(coinName.toUpperCase(), elements.coinName.offsetLeft, elements.coinName.offsetTop);
                     
-                    // Ticker
-                    ctx.font = '600 57px Inter, sans-serif';
+                    // Ticker - Geist-SemiBold 57px
+                    ctx.font = '600 57px Geist-SemiBold, Inter, sans-serif';
                     ctx.fillText(ticker.toUpperCase(), elements.ticker.offsetLeft, elements.ticker.offsetTop);
                     
-                    // PNL Label
-                    ctx.font = '400 16px Inter, sans-serif';
+                    // PNL Label - Geist-Regular
+                    ctx.font = '400 16px Geist-Regular, Inter, sans-serif';
                     ctx.fillText('PNL', elements.pnlLabel.offsetLeft, elements.pnlLabel.offsetTop);
                     
-                    // Labels and values
-                    ctx.font = '400 14px Inter, sans-serif';
+                    // Labels and values - Geist-Regular
+                    ctx.font = '400 14px Geist-Regular, Inter, sans-serif';
                     ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
                     ctx.fillText('Invested', elements.investedLabel.offsetLeft, elements.investedLabel.offsetTop);
                     ctx.fillText('Position', elements.positionLabel.offsetLeft, elements.positionLabel.offsetTop);
                     
-                    ctx.font = '400 28px Inter, sans-serif';
+                    // Values - Geist-Regular 28px
+                    ctx.font = '400 28px Geist-Regular, Inter, sans-serif';
                     ctx.fillStyle = 'white';
-                    ctx.fillText(`$${invested.toFixed(2)}`, elements.investedValue.offsetLeft, elements.investedValue.offsetTop);
-                    ctx.fillText(`$${position.toFixed(2)}`, elements.positionValue.offsetLeft, elements.positionValue.offsetTop);
+                    ctx.fillText(`${invested.toFixed(2)}`, elements.investedValue.offsetLeft, elements.investedValue.offsetTop);
+                    ctx.fillText(`${position.toFixed(2)}`, elements.positionValue.offsetLeft, elements.positionValue.offsetTop);
                     
-                    // Percentage
-                    ctx.font = '400 27px Inter, sans-serif';
+                    // Percentage - Geist-Regular 27px
+                    ctx.font = '400 27px Geist-Regular, Inter, sans-serif';
                     ctx.fillStyle = isPositive ? '#2fe3ac' : '#ff4444';
                     ctx.fillText(`${isPositive ? '+' : ''}${percentage.toFixed(0)}%`, elements.percentage.offsetLeft, elements.percentage.offsetTop);
                     
-                    // Username
-                    ctx.font = '500 41px Inter, sans-serif';
+                    // Username - Geist-Medium 41px
+                    ctx.font = '500 41px Geist-Medium, Inter, sans-serif';
                     ctx.fillStyle = 'white';
                     ctx.fillText(username, elements.username.offsetLeft, elements.username.offsetTop);
                     
