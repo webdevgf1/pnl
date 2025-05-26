@@ -288,6 +288,20 @@
             user-select: none;
             pointer-events: none;
             z-index: 2;
+            cursor: move;
+            padding: 2px 4px;
+            border: 2px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .draggable-text:hover {
+            border-color: #00fff9;
+            background: rgba(0, 255, 249, 0.1);
+        }
+
+        .draggable-text.dragging {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.2);
         }
 
         .coin-name {
@@ -490,6 +504,16 @@
                             Reset to Default
                         </button>
                     </div>
+
+                    <div class="background-section">
+                        <label>Position Mode:</label>
+                        <button class="win98-button" id="positionMode" onclick="togglePositionMode()" style="width: 100%;">
+                            Enable Position Mode
+                        </button>
+                        <div style="font-size: 10px; margin-top: 5px; color: #666;">
+                            Enable to drag text elements for positioning
+                        </div>
+                    </div>
                     
                     <button class="win98-button primary" onclick="downloadCard()" style="width: 100%; margin-top: 15px;">
                         Download P&L Card
@@ -503,12 +527,12 @@
                         <div class="card-preview" id="cardPreview">
                             <img id="customBackground" class="custom-background" style="display: none;">
                             
-                            <div class="draggable-text coin-name" id="coinNameText">FAKECOIN</div>
-                            <div class="draggable-text ticker" id="tickerText">22.52</div>
-                            <div class="draggable-text invested-value" id="investedValue">1.98</div>
-                            <div class="draggable-text position-value" id="positionValue">24.5</div>
-                            <div class="draggable-text percentage" id="percentageText">1135.51%</div>
-                            <div class="draggable-text username" id="usernameText">@TEMPLATE</div>
+                            <div class="draggable-text coin-name" id="coinNameText" data-name="coinName">FAKECOIN</div>
+                            <div class="draggable-text ticker" id="tickerText" data-name="ticker">22.52</div>
+                            <div class="draggable-text invested-value" id="investedValue" data-name="investedValue">1.98</div>
+                            <div class="draggable-text position-value" id="positionValue" data-name="positionValue">24.5</div>
+                            <div class="draggable-text percentage" id="percentageText" data-name="percentage">1135.51%</div>
+                            <div class="draggable-text username" id="usernameText" data-name="username">@TEMPLATE</div>
                         </div>
                     </div>
 
@@ -517,6 +541,12 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Coordinates Display -->
+        <div style="position: fixed; bottom: 40px; left: 10px; right: 10px; background: rgba(0,0,0,0.8); color: #00fff9; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 10px; z-index: 1001; max-height: 150px; overflow-y: auto;">
+            <strong>Current Coordinates (top, left, right, bottom):</strong><br>
+            <div id="coordList"></div>
         </div>
     </div>
 
@@ -531,6 +561,10 @@
 
     <script>
         let customBackgroundSet = false;
+        let positionModeEnabled = false;
+        let isDragging = false;
+        let currentElement = null;
+        let offset = { x: 0, y: 0 };
 
         // Update taskbar time
         function updateTime() {
@@ -548,6 +582,115 @@
 
         function openPumpFun() {
             window.open('https://pump.fun', '_blank');
+        }
+
+        // Position Mode Functions
+        function togglePositionMode() {
+            positionModeEnabled = !positionModeEnabled;
+            const btn = document.getElementById('positionMode');
+            const draggableElements = document.querySelectorAll('.draggable-text');
+            
+            if (positionModeEnabled) {
+                btn.textContent = 'Disable Position Mode';
+                btn.style.background = '#ff6b6b';
+                draggableElements.forEach(el => {
+                    el.style.pointerEvents = 'auto';
+                });
+                enableDragging();
+            } else {
+                btn.textContent = 'Enable Position Mode';
+                btn.style.background = '#c0c0c0';
+                draggableElements.forEach(el => {
+                    el.style.pointerEvents = 'none';
+                    el.classList.remove('dragging');
+                });
+                disableDragging();
+            }
+            updateCoordinates();
+        }
+
+        function enableDragging() {
+            const draggableElements = document.querySelectorAll('.draggable-text');
+            
+            draggableElements.forEach(element => {
+                element.addEventListener('mousedown', startDrag);
+            });
+            
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', stopDrag);
+        }
+
+        function disableDragging() {
+            const draggableElements = document.querySelectorAll('.draggable-text');
+            
+            draggableElements.forEach(element => {
+                element.removeEventListener('mousedown', startDrag);
+            });
+            
+            document.removeEventListener('mousemove', drag);
+            document.removeEventListener('mouseup', stopDrag);
+        }
+
+        function startDrag(e) {
+            if (!positionModeEnabled) return;
+            
+            isDragging = true;
+            currentElement = e.target;
+            currentElement.classList.add('dragging');
+            
+            const rect = currentElement.getBoundingClientRect();
+            const cardRect = document.getElementById('cardPreview').getBoundingClientRect();
+            
+            offset.x = e.clientX - rect.left;
+            offset.y = e.clientY - rect.top;
+            
+            e.preventDefault();
+        }
+
+        function drag(e) {
+            if (!isDragging || !currentElement) return;
+            
+            const cardRect = document.getElementById('cardPreview').getBoundingClientRect();
+            
+            let newX = e.clientX - cardRect.left - offset.x;
+            let newY = e.clientY - cardRect.top - offset.y;
+            
+            // Keep element within card bounds
+            newX = Math.max(0, Math.min(newX, 840 - currentElement.offsetWidth));
+            newY = Math.max(0, Math.min(newY, 570 - currentElement.offsetHeight));
+            
+            currentElement.style.left = newX + 'px';
+            currentElement.style.top = newY + 'px';
+            currentElement.style.right = 'auto';
+            currentElement.style.bottom = 'auto';
+            
+            updateCoordinates();
+        }
+
+        function stopDrag() {
+            if (currentElement) {
+                currentElement.classList.remove('dragging');
+            }
+            isDragging = false;
+            currentElement = null;
+        }
+
+        function updateCoordinates() {
+            const coordList = document.getElementById('coordList');
+            const elements = document.querySelectorAll('.draggable-text');
+            let coordText = '';
+            
+            elements.forEach(element => {
+                const name = element.dataset.name;
+                const top = Math.round(element.offsetTop);
+                const left = Math.round(element.offsetLeft);
+                const right = Math.round(840 - element.offsetLeft - element.offsetWidth);
+                const bottom = Math.round(570 - element.offsetTop - element.offsetHeight);
+                
+                coordText += `<div>${name}: top: ${top}px, left: ${left}px, right: ${right}px, bottom: ${bottom}px</div>`;
+            });
+            
+            coordList.innerHTML = coordText;
         }
 
         // Background upload functionality
@@ -629,34 +772,37 @@
                     ctx.textAlign = 'left';
                     ctx.textBaseline = 'top';
                     
-                    // Use EXACT coordinates scaled up for full resolution
-                    // coinName: top: 111px, left: 30px (original coordinates)
+                    // Get current positions of all elements and use them for download
+                    const elements = {
+                        coinName: document.getElementById('coinNameText'),
+                        ticker: document.getElementById('tickerText'),
+                        investedValue: document.getElementById('investedValue'),
+                        positionValue: document.getElementById('positionValue'),
+                        percentage: document.getElementById('percentageText'),
+                        username: document.getElementById('usernameText')
+                    };
+                    
+                    // Draw text at current element positions
                     ctx.font = '500 41px Geist-Medium, Inter, sans-serif';
                     ctx.fillStyle = 'white';
-                    ctx.fillText(coinName.toUpperCase(), 30, 111);
+                    ctx.fillText(coinName.toUpperCase(), elements.coinName.offsetLeft, elements.coinName.offsetTop);
                     
-                    // ticker: top: 173px, left: 132px
                     ctx.font = '600 57px Geist-SemiBold, Inter, sans-serif';
                     ctx.fillStyle = 'black';
-                    ctx.fillText(ticker.toUpperCase(), 132, 173);
+                    ctx.fillText(ticker.toUpperCase(), elements.ticker.offsetLeft, elements.ticker.offsetTop);
                     
-                    // investedValue: top: 325px, left: 292px
                     ctx.font = '400 28px Geist-Regular, Inter, sans-serif';
                     ctx.fillStyle = 'white';
-                    ctx.fillText(`${invested.toFixed(2)}`, 292, 325);
+                    ctx.fillText(`${invested.toFixed(2)}`, elements.investedValue.offsetLeft, elements.investedValue.offsetTop);
+                    ctx.fillText(`${position.toFixed(2)}`, elements.positionValue.offsetLeft, elements.positionValue.offsetTop);
                     
-                    // positionValue: top: 366px, left: 292px
-                    ctx.fillText(`${position.toFixed(2)}`, 292, 366);
-                    
-                    // percentage: top: 286px, left: 278px
                     ctx.font = '400 27px Geist-Regular, Inter, sans-serif';
                     ctx.fillStyle = isPositive ? '#2fe3ac' : '#ff4444';
-                    ctx.fillText(`${isPositive ? '+' : ''}${percentage.toFixed(2)}%`, 278, 286);
+                    ctx.fillText(`${isPositive ? '+' : ''}${percentage.toFixed(2)}%`, elements.percentage.offsetLeft, elements.percentage.offsetTop);
                     
-                    // username: top: 442px, left: 92px
                     ctx.font = '500 41px Geist-Medium, Inter, sans-serif';
                     ctx.fillStyle = 'white';
-                    ctx.fillText(username, 92, 442);
+                    ctx.fillText(username, elements.username.offsetLeft, elements.username.offsetTop);
                     
                     // Download
                     const link = document.createElement('a');
@@ -680,6 +826,7 @@
         
         // Initialize
         updatePreview();
+        updateCoordinates();
     </script>
 </body>
 </html>
