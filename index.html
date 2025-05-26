@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WENRICH: PNL Card Generator</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gifshot@0.4.5/dist/gifshot.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gif-encoder-2@1.0.5/dist/GIFEncoder.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
@@ -820,84 +820,70 @@ async function downloadAnimatedGif(coinName) {
     const originalText = downloadBtn.textContent;
     
     try {
-        downloadBtn.textContent = 'Capturing frames...';
+        downloadBtn.textContent = 'Creating GIF...';
         downloadBtn.disabled = true;
         
         const cardElement = document.getElementById('cardPreview');
-        const images = [];
-        const frameCount = 10;
-        const frameDelay = 200;
         
-        // Capture frames as data URLs
+        // Much smaller size and fewer frames
+        const width = 200;
+        const height = 135;
+        const frameCount = 3;
+        
+        // Create GIF encoder
+        const encoder = new GIFEncoder(width, height);
+        encoder.setRepeat(0); // 0 = loop forever
+        encoder.setDelay(400); // 400ms delay
+        encoder.setQuality(20); // Lower quality for smaller file
+        encoder.start();
+        
+        // Capture frames
         for (let i = 0; i < frameCount; i++) {
             downloadBtn.textContent = `Frame ${i + 1}/${frameCount}`;
             
-            await new Promise(resolve => setTimeout(resolve, frameDelay));
+            await new Promise(resolve => setTimeout(resolve, 500));
             
             const canvas = await html2canvas(cardElement, {
-                width: 420,
-                height: 285,
-                scale: 0.5,
+                width: width,
+                height: height,
+                scale: 0.24, // Very small scale
                 useCORS: true,
                 allowTaint: true,
                 backgroundColor: null,
                 logging: false
             });
             
-            images.push(canvas.toDataURL('image/png'));
+            const ctx = canvas.getContext('2d');
+            const imageData = ctx.getImageData(0, 0, width, height);
+            encoder.addFrame(imageData.data);
         }
         
-        downloadBtn.textContent = 'Creating GIF...';
+        encoder.finish();
         
-        // Use gifshot to create GIF
-        gifshot.createGIF({
-            images: images,
-            gifWidth: 420,
-            gifHeight: 285,
-            interval: 0.2, // 200ms between frames
-            numFrames: frameCount,
-            frameDuration: 200,
-            fontWeight: 'normal',
-            fontSize: '16px',
-            fontFamily: 'sans-serif',
-            fontColor: '#ffffff',
-            textAlign: 'center',
-            textBaseline: 'bottom',
-            sampleInterval: 10,
-            numWorkers: 2
-        }, function(obj) {
-            if (!obj.error) {
-                // Convert base64 to blob
-                const byteCharacters = atob(obj.image.split(',')[1]);
-                const byteNumbers = new Array(byteCharacters.length);
-                for (let i = 0; i < byteCharacters.length; i++) {
-                    byteNumbers[i] = byteCharacters.charCodeAt(i);
-                }
-                const byteArray = new Uint8Array(byteNumbers);
-                const blob = new Blob([byteArray], {type: 'image/gif'});
-                
-                // Download
-                const link = document.createElement('a');
-                link.download = `${coinName}_PNL_Card.gif`;
-                link.href = URL.createObjectURL(blob);
-                link.click();
-                
-                downloadBtn.textContent = originalText;
-                downloadBtn.disabled = false;
-            } else {
-                throw new Error(obj.error);
-            }
-        });
+        // Get the GIF as bytes
+        const bytes = encoder.out.getData();
+        const blob = new Blob([new Uint8Array(bytes)], {type: 'image/gif'});
+        
+        // Download
+        const link = document.createElement('a');
+        link.download = `${coinName}_PNL_Card.gif`;
+        link.href = URL.createObjectURL(blob);
+        link.click();
+        
+        downloadBtn.textContent = originalText;
+        downloadBtn.disabled = false;
         
     } catch (error) {
         console.error('GIF creation failed:', error);
         downloadBtn.textContent = originalText;
         downloadBtn.disabled = false;
-        alert('GIF creation failed. Downloading as PNG instead.');
+        
+        // Simple fallback - just inform user and download PNG
+        alert('GIF export is having technical issues. Downloading high-quality PNG instead!');
         await downloadStaticPng(coinName);
     }
 }
-
+        
 async function downloadStaticPng(coinName) {
     try {
         const cardElement = document.getElementById('cardPreview');
