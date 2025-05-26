@@ -188,24 +188,9 @@
             z-index: 20;
         }
 
-        /* Draggable text elements */
-        .draggable-text {
+        /* Text elements - fixed positioning */
+        .coin-name, .ticker, .invested-value, .position-value, .percentage, .username {
             position: absolute;
-            cursor: move;
-            user-select: none;
-            padding: 2px 4px;
-            border: 2px solid transparent;
-            transition: border-color 0.2s;
-        }
-
-        .draggable-text:hover {
-            border-color: #00fff9;
-            background: rgba(0, 255, 249, 0.1);
-        }
-
-        .draggable-text.dragging {
-            border-color: #ff6b6b;
-            background: rgba(255, 107, 107, 0.2);
         }
 
         .coin-name {
@@ -343,13 +328,9 @@
             </div>
             
             <div class="mode-toggle">
-                <button class="toggle-btn" id="positionMode" onclick="togglePositionMode()">
-                    Enable Position Mode
-                </button>
-                
                 <div class="instructions">
-                    <strong>Position Mode:</strong><br>
-                    Click to enable, then drag any text element to reposition it. Coordinates will update below.
+                    <strong>Instructions:</strong><br>
+                    Fill out the form to customize your P&L card, then download your personalized image.
                 </div>
                 
                 <button class="download-btn" onclick="downloadCard()">
@@ -360,24 +341,16 @@
         
         <div class="card-container">
             <div class="card-preview" id="cardPreview">
-                <div class="text-overlay" id="textOverlay"></div>
-                <button class="overlay-toggle" onclick="toggleOverlay()">Toggle Overlay</button>
+                <div class="coin-name" id="coinNameText">FAKECOIN</div>
+                <div class="ticker" id="tickerText">22.52</div>
                 
-                <div class="draggable-text coin-name" id="coinNameText" data-name="coinName">FAKECOIN</div>
-                <div class="draggable-text ticker" id="tickerText" data-name="ticker">22.52</div>
+                <div class="invested-value" id="investedValue">1.98</div>
+                <div class="position-value" id="positionValue">24.5</div>
                 
-                <div class="draggable-text invested-value" id="investedValue" data-name="investedValue">1.98</div>
-                <div class="draggable-text position-value" id="positionValue" data-name="positionValue">24.5</div>
+                <div class="percentage" id="percentageText">1135.51%</div>
                 
-                <div class="draggable-text percentage" id="percentageText" data-name="percentage">1135.51%</div>
-                
-                <div class="draggable-text username" id="usernameText" data-name="username">@TEMPLATE</div>
+                <div class="username" id="usernameText">@TEMPLATE</div>
             </div>
-        </div>
-        
-        <div class="coordinates" id="coordinates">
-            <strong>Current Coordinates (top, left, right, bottom):</strong><br>
-            <div id="coordList"></div>
         </div>
     </div>
 
@@ -631,7 +604,6 @@
         
         // Initialize
         updatePreview();
-        updateCoordinates();
     </script>
 </body>
 </html>
