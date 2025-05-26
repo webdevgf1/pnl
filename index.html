@@ -43,8 +43,25 @@
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .form-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .preview-section {
+            position: sticky;
+            top: 20px;
         }
 
         h1 {
@@ -54,36 +71,11 @@
             background: linear-gradient(45deg, #00fff9, #0099ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-        }
-
-        .controls {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-
-        .form-section {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            flex: 1;
-            min-width: 300px;
-        }
-
-        .mode-toggle {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            min-width: 200px;
+            grid-column: 1 / -1;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         label {
@@ -91,17 +83,16 @@
             margin-bottom: 8px;
             font-weight: bold;
             color: #00fff9;
-            font-size: 14px;
         }
 
         input {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 8px;
             background: rgba(255, 255, 255, 0.1);
             color: white;
-            font-size: 14px;
+            font-size: 16px;
             transition: border-color 0.3s;
         }
 
@@ -114,33 +105,10 @@
             color: rgba(255, 255, 255, 0.6);
         }
 
-        .toggle-btn {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(45deg, #00fff9, #0099ff);
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 15px;
-            transition: transform 0.3s;
-        }
-
-        .toggle-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .toggle-btn.active {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
-        }
-
         .card-container {
             display: flex;
             justify-content: center;
             margin: 30px 0;
-            overflow-x: auto;
         }
 
         .card-preview {
@@ -151,104 +119,59 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            border: 2px solid #00fff9;
-            cursor: default;
-            flex-shrink: 0;
-        }
-
-        .text-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/68349ab02498c44563dcf398_FINALPNLCARD.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            opacity: 0.7;
-            pointer-events: none;
-            z-index: 10;
-            display: none;
-        }
-
-        .overlay-toggle {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0, 255, 249, 0.8);
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 5px;
-            font-size: 12px;
-            cursor: pointer;
-            z-index: 20;
-        }
-
-        .draggable-text {
-            position: absolute;
-            cursor: move;
-            user-select: none;
-            padding: 2px 4px;
-            border: 2px solid transparent;
-            transition: border-color 0.2s;
-            pointer-events: none;
-        }
-
-        .draggable-text:hover {
-            border-color: #00fff9;
-            background: rgba(0, 255, 249, 0.1);
-        }
-
-        .draggable-text.dragging {
-            border-color: #ff6b6b;
-            background: rgba(255, 107, 107, 0.2);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0, 255, 249, 0.3);
         }
 
         .coin-name {
+            position: absolute;
+            top: 111px;
+            left: 30px;
             font-family: 'Geist-Medium', 'Inter', sans-serif;
             font-weight: 500;
             font-size: 41px;
             color: white;
-            top: 50px;
-            left: 50px;
         }
 
         .ticker {
+            position: absolute;
+            top: 173px;
+            left: 132px;
             font-family: 'Geist-SemiBold', 'Inter', sans-serif;
             font-weight: 600;
             font-size: 57px;
             color: black;
-            top: 120px;
-            left: 50px;
         }
 
         .invested-value {
+            position: absolute;
+            top: 325px;
+            left: 292px;
             font-family: 'Geist-Regular', 'Inter', sans-serif;
             font-weight: 400;
             font-size: 28px;
             color: white;
-            top: 200px;
-            left: 50px;
         }
 
         .position-value {
+            position: absolute;
+            top: 366px;
+            left: 292px;
             font-family: 'Geist-Regular', 'Inter', sans-serif;
             font-weight: 400;
             font-size: 28px;
             color: white;
-            top: 250px;
-            left: 50px;
         }
 
         .percentage {
+            position: absolute;
+            top: 286px;
+            left: 278px;
             font-family: 'Geist-Regular', 'Inter', sans-serif;
             font-weight: 400;
             font-size: 27px;
             color: #2fe3ac;
-            top: 300px;
-            left: 50px;
         }
 
         .percentage.negative {
@@ -256,27 +179,13 @@
         }
 
         .username {
+            position: absolute;
+            top: 442px;
+            left: 92px;
             font-family: 'Geist-Medium', 'Inter', sans-serif;
             font-weight: 500;
             font-size: 41px;
             color: white;
-            top: 400px;
-            left: 50px;
-        }
-
-        .coordinates {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            line-height: 1.4;
-        }
-
-        .coord-item {
-            margin-bottom: 8px;
-            color: #00fff9;
         }
 
         .download-btn {
@@ -298,12 +207,39 @@
         }
 
         .instructions {
-            background: rgba(255, 193, 7, 0.1);
-            border: 1px solid rgba(255, 193, 7, 0.3);
+            background: rgba(0, 255, 249, 0.1);
+            border: 1px solid rgba(0, 255, 249, 0.3);
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 20px;
             font-size: 14px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .card-preview {
+                width: 100%;
+                max-width: 420px;
+                height: 285px;
+                margin: 0 auto;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            /* Scale down text for mobile */
+            .coin-name { font-size: 20px; top: 56px; left: 15px; }
+            .ticker { font-size: 28px; top: 87px; left: 66px; }
+            .invested-value { font-size: 14px; top: 163px; left: 146px; }
+            .position-value { font-size: 14px; top: 183px; left: 146px; }
+            .percentage { font-size: 13px; top: 143px; left: 139px; }
+            .username { font-size: 20px; top: 221px; left: 46px; }
         }
     </style>
 </head>
@@ -311,197 +247,57 @@
     <div class="container">
         <h1>Memecoin P&L Card Generator</h1>
         
-        <div class="controls">
-            <div class="form-section">
-                <div class="form-group">
-                    <label for="coinName">Coin Name</label>
-                    <input type="text" id="coinName" placeholder="e.g., FAKECOIN" value="FAKECOIN">
-                </div>
-                
-                <div class="form-group">
-                    <label for="ticker">Ticker Symbol</label>
-                    <input type="text" id="ticker" placeholder="e.g., STONKS" value="22.52">
-                </div>
-                
-                <div class="form-group">
-                    <label for="invested">Amount Invested</label>
-                    <input type="number" id="invested" placeholder="e.g., 1.98" step="0.01" value="1.98">
-                </div>
-                
-                <div class="form-group">
-                    <label for="position">Current Position Value</label>
-                    <input type="number" id="position" placeholder="e.g., 24.5" step="0.01" value="24.5">
-                </div>
-                
-                <div class="form-group">
-                    <label for="username">Username/Handle</label>
-                    <input type="text" id="username" placeholder="e.g., @yourusername" value="@TEMPLATE">
-                </div>
+        <div class="form-section">
+            <div class="instructions">
+                <strong>Create Your P&L Card</strong><br>
+                Fill out your trading details and download your personalized memecoin P&L card!
             </div>
             
-            <div class="mode-toggle">
-                <button class="toggle-btn" id="positionMode" onclick="togglePositionMode()">
-                    Enable Position Mode
-                </button>
-                
-                <div class="instructions">
-                    <strong>Position Mode:</strong><br>
-                    Click to enable, then drag any text element to reposition it. Coordinates will update below.
+            <div class="form-group">
+                <label for="coinName">Coin Name</label>
+                <input type="text" id="coinName" placeholder="e.g., FAKECOIN" value="FAKECOIN">
+            </div>
+            
+            <div class="form-group">
+                <label for="ticker">Ticker Symbol / Price</label>
+                <input type="text" id="ticker" placeholder="e.g., 22.52" value="22.52">
+            </div>
+            
+            <div class="form-group">
+                <label for="invested">Amount Invested</label>
+                <input type="number" id="invested" placeholder="e.g., 1.98" step="0.01" value="1.98">
+            </div>
+            
+            <div class="form-group">
+                <label for="position">Current Position Value</label>
+                <input type="number" id="position" placeholder="e.g., 24.5" step="0.01" value="24.5">
+            </div>
+            
+            <div class="form-group">
+                <label for="username">Username/Handle</label>
+                <input type="text" id="username" placeholder="e.g., @yourusername" value="@TEMPLATE">
+            </div>
+            
+            <button class="download-btn" onclick="downloadCard()">
+                Download P&L Card
+            </button>
+        </div>
+        
+        <div class="preview-section">
+            <div class="card-container">
+                <div class="card-preview" id="cardPreview">
+                    <div class="coin-name" id="coinNameText">FAKECOIN</div>
+                    <div class="ticker" id="tickerText">22.52</div>
+                    <div class="invested-value" id="investedValue">1.98</div>
+                    <div class="position-value" id="positionValue">24.5</div>
+                    <div class="percentage" id="percentageText">1135.51%</div>
+                    <div class="username" id="usernameText">@TEMPLATE</div>
                 </div>
-                
-                <button class="download-btn" onclick="downloadCard()">
-                    Download P&L Card
-                </button>
             </div>
-        </div>
-        
-        <div class="card-container">
-            <div class="card-preview" id="cardPreview">
-                <div class="text-overlay" id="textOverlay"></div>
-                <button class="overlay-toggle" onclick="toggleOverlay()">Show Overlay</button>
-                
-                <div class="draggable-text coin-name" id="coinNameText" data-name="coinName">FAKECOIN</div>
-                <div class="draggable-text ticker" id="tickerText" data-name="ticker">22.52</div>
-                <div class="draggable-text invested-value" id="investedValue" data-name="investedValue">1.98</div>
-                <div class="draggable-text position-value" id="positionValue" data-name="positionValue">24.5</div>
-                <div class="draggable-text percentage" id="percentageText" data-name="percentage">1135.51%</div>
-                <div class="draggable-text username" id="usernameText" data-name="username">@TEMPLATE</div>
-            </div>
-        </div>
-        
-        <div class="coordinates" id="coordinates">
-            <strong>Current Coordinates (top, left, right, bottom):</strong><br>
-            <div id="coordList"></div>
         </div>
     </div>
 
     <script>
-        let positionModeEnabled = false;
-        let isDragging = false;
-        let currentElement = null;
-        let offset = { x: 0, y: 0 };
-
-        function toggleOverlay() {
-            const overlay = document.getElementById('textOverlay');
-            const btn = document.querySelector('.overlay-toggle');
-            
-            if (overlay.style.display === 'none') {
-                overlay.style.display = 'block';
-                btn.textContent = 'Hide Overlay';
-            } else {
-                overlay.style.display = 'none';
-                btn.textContent = 'Show Overlay';
-            }
-        }
-
-        function togglePositionMode() {
-            positionModeEnabled = !positionModeEnabled;
-            const btn = document.getElementById('positionMode');
-            const draggableElements = document.querySelectorAll('.draggable-text');
-            
-            if (positionModeEnabled) {
-                btn.textContent = 'Disable Position Mode';
-                btn.classList.add('active');
-                draggableElements.forEach(el => {
-                    el.style.pointerEvents = 'auto';
-                });
-                enableDragging();
-            } else {
-                btn.textContent = 'Enable Position Mode';
-                btn.classList.remove('active');
-                draggableElements.forEach(el => {
-                    el.style.pointerEvents = 'none';
-                    el.classList.remove('dragging');
-                });
-                disableDragging();
-            }
-            updateCoordinates();
-        }
-
-        function enableDragging() {
-            const draggableElements = document.querySelectorAll('.draggable-text');
-            
-            draggableElements.forEach(element => {
-                element.addEventListener('mousedown', startDrag);
-            });
-            
-            document.addEventListener('mousemove', drag);
-            document.addEventListener('mouseup', stopDrag);
-        }
-
-        function disableDragging() {
-            const draggableElements = document.querySelectorAll('.draggable-text');
-            
-            draggableElements.forEach(element => {
-                element.removeEventListener('mousedown', startDrag);
-            });
-            
-            document.removeEventListener('mousemove', drag);
-            document.removeEventListener('mouseup', stopDrag);
-        }
-
-        function startDrag(e) {
-            if (!positionModeEnabled) return;
-            
-            isDragging = true;
-            currentElement = e.target;
-            currentElement.classList.add('dragging');
-            
-            const rect = currentElement.getBoundingClientRect();
-            const cardRect = document.getElementById('cardPreview').getBoundingClientRect();
-            
-            offset.x = e.clientX - rect.left;
-            offset.y = e.clientY - rect.top;
-            
-            e.preventDefault();
-        }
-
-        function drag(e) {
-            if (!isDragging || !currentElement) return;
-            
-            const cardRect = document.getElementById('cardPreview').getBoundingClientRect();
-            
-            let newX = e.clientX - cardRect.left - offset.x;
-            let newY = e.clientY - cardRect.top - offset.y;
-            
-            // Keep element within card bounds
-            newX = Math.max(0, Math.min(newX, 840 - currentElement.offsetWidth));
-            newY = Math.max(0, Math.min(newY, 570 - currentElement.offsetHeight));
-            
-            currentElement.style.left = newX + 'px';
-            currentElement.style.top = newY + 'px';
-            currentElement.style.right = 'auto';
-            currentElement.style.bottom = 'auto';
-            
-            updateCoordinates();
-        }
-
-        function stopDrag() {
-            if (currentElement) {
-                currentElement.classList.remove('dragging');
-            }
-            isDragging = false;
-            currentElement = null;
-        }
-
-        function updateCoordinates() {
-            const coordList = document.getElementById('coordList');
-            const elements = document.querySelectorAll('.draggable-text');
-            let coordText = '';
-            
-            elements.forEach(element => {
-                const name = element.dataset.name;
-                const top = Math.round(element.offsetTop);
-                const left = Math.round(element.offsetLeft);
-                const right = Math.round(840 - element.offsetLeft - element.offsetWidth);
-                const bottom = Math.round(570 - element.offsetTop - element.offsetHeight);
-                
-                coordText += `<div class="coord-item">${name}: top: ${top}px, left: ${left}px, right: ${right}px, bottom: ${bottom}px</div>`;
-            });
-            
-            coordList.innerHTML = coordText;
-        }
-
         function updatePreview() {
             const coinName = document.getElementById('coinName').value || 'FAKECOIN';
             const ticker = document.getElementById('ticker').value || '22.52';
@@ -522,7 +318,7 @@
             
             const percentageElement = document.getElementById('percentageText');
             percentageElement.textContent = `${isPositive ? '+' : ''}${percentage.toFixed(2)}%`;
-            percentageElement.className = `draggable-text percentage ${isPositive ? '' : 'negative'}`;
+            percentageElement.className = `percentage ${isPositive ? '' : 'negative'}`;
         }
 
         async function downloadCard() {
@@ -549,40 +345,37 @@
                     // Draw background
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                     
-                    // Get current positions of all elements
-                    const elements = {
-                        coinName: document.getElementById('coinNameText'),
-                        ticker: document.getElementById('tickerText'),
-                        investedValue: document.getElementById('investedValue'),
-                        positionValue: document.getElementById('positionValue'),
-                        percentage: document.getElementById('percentageText'),
-                        username: document.getElementById('usernameText')
-                    };
-                    
                     ctx.textAlign = 'left';
                     ctx.textBaseline = 'top';
                     
-                    // Draw text at current positions
+                    // Draw text at exact coordinates
+                    // Coin name - top: 111px, left: 30px
                     ctx.font = '500 41px Geist-Medium, Inter, sans-serif';
                     ctx.fillStyle = 'white';
-                    ctx.fillText(coinName.toUpperCase(), elements.coinName.offsetLeft, elements.coinName.offsetTop);
+                    ctx.fillText(coinName.toUpperCase(), 30, 111);
                     
+                    // Ticker - top: 173px, left: 132px (BLACK)
                     ctx.font = '600 57px Geist-SemiBold, Inter, sans-serif';
                     ctx.fillStyle = 'black';
-                    ctx.fillText(ticker.toUpperCase(), elements.ticker.offsetLeft, elements.ticker.offsetTop);
+                    ctx.fillText(ticker.toUpperCase(), 132, 173);
                     
+                    // Invested Value - top: 325px, left: 292px
                     ctx.font = '400 28px Geist-Regular, Inter, sans-serif';
                     ctx.fillStyle = 'white';
-                    ctx.fillText(`${invested.toFixed(2)}`, elements.investedValue.offsetLeft, elements.investedValue.offsetTop);
-                    ctx.fillText(`${position.toFixed(2)}`, elements.positionValue.offsetLeft, elements.positionValue.offsetTop);
+                    ctx.fillText(`${invested.toFixed(2)}`, 292, 325);
                     
+                    // Position Value - top: 366px, left: 292px
+                    ctx.fillText(`${position.toFixed(2)}`, 292, 366);
+                    
+                    // Percentage - top: 286px, left: 278px
                     ctx.font = '400 27px Geist-Regular, Inter, sans-serif';
                     ctx.fillStyle = isPositive ? '#2fe3ac' : '#ff4444';
-                    ctx.fillText(`${isPositive ? '+' : ''}${percentage.toFixed(2)}%`, elements.percentage.offsetLeft, elements.percentage.offsetTop);
+                    ctx.fillText(`${isPositive ? '+' : ''}${percentage.toFixed(2)}%`, 278, 286);
                     
+                    // Username - top: 442px, left: 92px
                     ctx.font = '500 41px Geist-Medium, Inter, sans-serif';
                     ctx.fillStyle = 'white';
-                    ctx.fillText(username, elements.username.offsetLeft, elements.username.offsetTop);
+                    ctx.fillText(username, 92, 442);
                     
                     // Download
                     const link = document.createElement('a');
@@ -606,7 +399,6 @@
         
         // Initialize
         updatePreview();
-        updateCoordinates();
     </script>
 </body>
 </html>
