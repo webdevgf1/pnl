@@ -819,46 +819,56 @@ async function downloadAnimatedGif(coinName) {
     const downloadBtn = document.querySelector('.win98-button.primary');
     const originalText = downloadBtn.textContent;
     
-    // Show loading state
-    downloadBtn.textContent = 'Creating GIF...';
-    downloadBtn.disabled = true;
-    
-    const gif = new GIF({
-        workers: 2,
-        quality: 10,
-        width: 840,
-        height: 570,
-        repeat: 0
-    });
-    
-    const cardElement = document.getElementById('cardPreview');
-    const frameCount = 15;
-    const frameDelay = 150;
-    
     try {
+        // Show loading state
+        downloadBtn.textContent = 'Creating GIF...';
+        downloadBtn.disabled = true;
+        
+        const gif = new GIF({
+            workers: 2,
+            quality: 15, // Increased quality number (lower quality but faster)
+            width: 420, // Reduced size for faster processing
+            height: 285,
+            repeat: 0,
+            transparent: null,
+            debug: false
+        });
+        
+        const cardElement = document.getElementById('cardPreview');
+        const frameCount = 8; // Reduced frames
+        const frameDelay = 200; // Increased delay
+        
+        console.log('Starting frame capture...');
+        
         // Capture frames
         for (let i = 0; i < frameCount; i++) {
+            downloadBtn.textContent = `Capturing frame ${i + 1}/${frameCount}`;
+            
             await new Promise(resolve => setTimeout(resolve, frameDelay));
             
             const canvas = await html2canvas(cardElement, {
-                width: 840,
-                height: 570,
-                scale: 1,
+                width: 420, // Half size for faster processing
+                height: 285,
+                scale: 0.5,
                 useCORS: true,
                 allowTaint: true,
                 backgroundColor: null,
-                logging: false
+                logging: false,
+                onclone: function(clonedDoc) {
+                    clonedDoc.querySelector('.card-preview').style.transform = 'scale(0.5)';
+                }
             });
             
             gif.addFrame(canvas, {delay: frameDelay});
-            
-            // Update button with progress
-            downloadBtn.textContent = `Capturing... ${i + 1}/${frameCount}`;
+            console.log(`Frame ${i + 1} captured`);
         }
         
         downloadBtn.textContent = 'Processing GIF...';
+        console.log('All frames captured, starting render...');
         
+        // Handle completion
         gif.on('finished', function(blob) {
+            console.log('GIF generation complete!');
             const link = document.createElement('a');
             link.download = `${coinName}_PNL_Card.gif`;
             link.href = URL.createObjectURL(blob);
@@ -870,8 +880,20 @@ async function downloadAnimatedGif(coinName) {
         });
         
         gif.on('progress', function(p) {
-            downloadBtn.textContent = `Processing... ${Math.round(p * 100)}%`;
+            const percent = Math.round(p * 100);
+            downloadBtn.textContent = `Processing... ${percent}%`;
+            console.log(`Processing: ${percent}%`);
         });
+        
+        // Add timeout to prevent infinite processing
+        setTimeout(() => {
+            if (downloadBtn.disabled) {
+                console.log('GIF processing timeout');
+                downloadBtn.textContent = originalText;
+                downloadBtn.disabled = false;
+                alert('GIF processing is taking too long. Try a smaller background image or download as PNG.');
+            }
+        }, 30000); // 30 second timeout
         
         gif.render();
         
@@ -879,7 +901,7 @@ async function downloadAnimatedGif(coinName) {
         console.error('GIF creation failed:', error);
         downloadBtn.textContent = originalText;
         downloadBtn.disabled = false;
-        alert('GIF creation failed. Try downloading as PNG instead.');
+        alert('GIF creation failed: ' + error.message);
     }
 }
 
