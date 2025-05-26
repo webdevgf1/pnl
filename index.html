@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Desktop - P&L Card Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
@@ -740,6 +741,38 @@
         }
 
         async function downloadCard() {
+            try {
+                // Get the card preview element
+                const cardElement = document.getElementById('cardPreview');
+                
+                // Use html2canvas to capture the exact preview
+                const canvas = await html2canvas(cardElement, {
+                    width: 840,
+                    height: 570,
+                    scale: 1,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: null,
+                    logging: false
+                });
+                
+                // Get current values for filename
+                const coinName = document.getElementById('coinName').value || 'FAKECOIN';
+                
+                // Download the screenshot
+                const link = document.createElement('a');
+                link.download = `${coinName}_PNL_Card.png`;
+                link.href = canvas.toDataURL('image/png', 1.0);
+                link.click();
+                
+            } catch (error) {
+                console.error('Screenshot failed:', error);
+                // Fallback to manual canvas method if html2canvas fails
+                downloadCardManual();
+            }
+        }
+
+        async function downloadCardManual() {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             canvas.width = 840;
