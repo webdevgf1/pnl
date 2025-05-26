@@ -685,25 +685,25 @@
 }
 
         function updatePnlOverlay() {
-            if (!customBackgroundSet) return;
-            
-            const invested = parseFloat(document.getElementById('invested').value) || 1.98;
-            const position = parseFloat(document.getElementById('position').value) || 24.5;
-            const percentage = invested > 0 ? ((position - invested) / invested * 100) : 0;
-            const isProfit = percentage >= 0;
-            
-            const pnlOverlay = document.getElementById('pnlOverlay');
-            
-            if (isProfit) {
-                // Use green profit overlay
-                pnlOverlay.src = 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6834a8a45948936715329db3_customwinner.png';
-            } else {
-                // Use red loss overlay
-                pnlOverlay.src = 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6834a8a45948936715329daf_customloser.png';
-            }
-            
-            pnlOverlay.style.display = 'block';
-        }
+    if (!customBackgroundSet) return;
+    
+    const invested = parseFloat(document.getElementById('invested').value) || 1.98;
+    const position = parseFloat(document.getElementById('position').value) || 24.5;
+    const rawProfit = position - invested; // Use raw calculation
+    const isProfit = rawProfit >= 0; // Check if raw profit is positive
+    
+    const pnlOverlay = document.getElementById('pnlOverlay');
+    
+    if (isProfit) {
+        // Use green profit overlay
+        pnlOverlay.src = 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6834a8a45948936715329db3_customwinner.png';
+    } else {
+        // Use red loss overlay
+        pnlOverlay.src = 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6834a8a45948936715329daf_customloser.png';
+    }
+    
+    pnlOverlay.style.display = 'block';
+}
 
         function updatePreview() {
             const coinName = document.getElementById('coinName').value || 'FAKECOIN';
